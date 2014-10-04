@@ -1,0 +1,75 @@
+Music Player
+
+TODOs
+-----
+
+Hover over the staff to preview where a note head will land.  This will display the note type that was last added.  It will also display any stem and flags as appropriate for the note and will also align the stem in the correct direction based on staff position.
+
+Click down on the staff to plant the head in a position horizontally.
+
+While mouse is down, drag left to decrease the duration of the note, right to increase.
+
+While mouse is down, drag up or down to change the location of the note on the staff.
+
+Ideally there will be visual indicators to preview the effects of moving the mouse to a particular position left or right or up or down.  Ideally the vertical indicators would fade out at a certain distance away from the cursor.
+
+Anchor points will play a crucial role
+
+Internal representation will be graphical, not musical.  Rather than 'Quarter Note' there will be 'Quarter Head' and 'Vertical Line' for the stem.  The head will have two anchor points (left and right) where the stem can be attached and likewise the stem will have two anchor points (top and bottom) for where it can be attached to the note.  Bars that connect multiple notes (such as eighths or sixteenths) will have 'line anchors' which allow connections to note stems at any point along the bar.  While this symbol-based approach will add complexity to the system, especially the music interpretation and playback, it will help enforce the idea that this software speaks in graphical symbols rather than in musical notation.  There will also be disconnected anchors for things like slur symbols which don't actually touch the notes that they effect.  When adding these interactively, the notes that will be effected will be highlighted as the slur or other symbol is being drawn.  The slur start and end positions will not 'snap' to specific positions around notes so that the user is provided flexibility with exact positioning for aesthetics.  Yet if afterwards notes are added or removed in such a way that the disconnected anchor now surrounds too many or too few notes, then the anchor boundary will be moved to ensure that the musical interpretation remains the same as when originally drawn.
+
+OR
+
+Internal representation will be musical. While this approach seems to be less flexible it is much simpler because in reality the entire application is ordered toward interpreting music rather than just displaying it.  So everything from adding the notes and rests to editing and snapping to finally playing the piece all revolves around proper musical interpretation.  Even though the app is geared toward users without a musical background, the permitted and non-permitted actions will follow musical rules so that the users are forced to do the right thing at all times.  There can still be tons of flexibility in graphical layout with this approach, but it will be appended to the proper musical representation rather than the other way around.
+
+
+Musical representation:
+Staff Groups (visual staff group separation on one page)
+  Staff Group (All staves connected together)
+    Staff
+      Starting section ID
+      Symbols (ordered list left-to-right)
+        Symbol
+          ID
+          ONE of:
+            Parallel Symbol Groups OR
+              Symbol Groups
+                Symbol Group
+                  Symbols
+            Rest OR
+            Note OR
+              NoteHeadID
+              StemID (optional)
+              Order on stem (0 is bottom of stem)
+              FlagCount (optional, 1 = eighth, 2 = 16th, etc)
+            Measure break OR
+            Section start ID
+          Attachments List
+          Margin
+      Symbol Attachments
+        Type (note bar, slur, pedal, volume, fermata, accent, staccato)
+        Anchor symbol IDs
+        Custom graphical data (eg slur arc control points.  
+           Each point could be relative to staff or anchor symbol)
+      NoteHeads
+        NoteHead (can be shared by multiple stems)
+          ID
+          StaffPosition (=0 for middle C, + or - for higher or lower)
+          VisualType (Quarter, Half, Whole)
+          Direction (right, left from stem)
+          IsDotted
+          Accidental
+
+      Stems (can be shared by multiple noteheads)
+        Stem
+          ID
+          Direction (up, down from noteheads)
+          Noteheads
+
+Staff Sections
+  Staff Section
+    ID
+    Clef
+    Key signature
+    Time signature
+
+
