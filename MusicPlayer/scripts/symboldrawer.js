@@ -10,7 +10,7 @@
                 ctx.beginPath();
                 ctx.arc(centerPoint.x, centerPoint.y, height / 2, 0, 2 * Math.PI);
                 if (isPreview) {
-                    ctx.fillStyle = "#999999";
+                    ctx.fillStyle = "rgba(170,170,170, 0.75)";
                 }
                 else {
                     ctx.fillStyle = "#000000";
@@ -38,9 +38,18 @@
         }
     };
 
+    var _getDrawSize = function (symbol) {
+        switch (symbol) {
+            case notehead.visualTypes.Quarter:
+                var height = staffarranger.noteHeight + 4; // Need an extra 4 pixels to include 'ghost' pixels from antialiasing
+                return new utils.Size(height, height);
+        }
+    };
+
     return {
         draw: _draw,
         clear: _clear,
-        getDrawRect: _getDrawRect
+        getDrawRect: _getDrawRect,
+        getDrawSize: _getDrawSize,
     };
 });

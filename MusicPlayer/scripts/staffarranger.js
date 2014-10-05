@@ -1,7 +1,7 @@
 ﻿define(['viewport', 'utils'], function (viewport, utils) {
 
     var staffHeight = 120;
-    var horizontalMargin = 20;
+    var _horizontalMargin = 20;
     var verticalMargin = 120;
     var _noteHeight = staffHeight / 4;
     var interStaffDistance = 150; // Must be a multiple of _noteHeight for current algorithm of _clampMovableHead
@@ -13,10 +13,10 @@
         var bounds = _bounds();
         var lastStaff = bounds[bounds.length - 1];
 
-        if (point.x < horizontalMargin) {
-            x = horizontalMargin;
-        } else if (point.x > viewport.width - horizontalMargin) {
-            x = viewport.width - horizontalMargin;
+        if (point.x < _horizontalMargin) {
+            x = _horizontalMargin;
+        } else if (point.x > viewport.width - _horizontalMargin) {
+            x = viewport.width - _horizontalMargin;
         }
 
         if (y < verticalMargin) {
@@ -65,9 +65,9 @@
         var staffList = [];
         for (var y = verticalMargin + (interStaffDistance / 2) ; y + staffHeight + (interStaffDistance / 2) + verticalMargin < viewport.height; y += interStaffDistance + staffHeight) {
             staffList.push(new utils.Rectangle(
-                horizontalMargin,
+                _horizontalMargin,
                 y,
-                viewport.width - (horizontalMargin * 2),
+                viewport.width - (_horizontalMargin * 2),
                 staffHeight
             ));
         }
@@ -75,6 +75,7 @@
     };
 
     return {
+        horizontalMargin: _horizontalMargin,
         clampMovableHead: _clampMovableHead,
         clampStationarySymbol: _clampStationarySymbol,
         bounds: _bounds,

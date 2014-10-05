@@ -4,6 +4,7 @@
     'symboldrawer',
     'symbols',
     'staffarranger',
+    'relativearranger',
     'playbacktoolbar',
     'musicplayer',
     'notereader',
@@ -18,6 +19,7 @@
         symboldrawer,
         symbols,
         staffarranger,
+        relativearranger,
         playbacktoolbar,
         musicplayer,
         notereader,
@@ -54,6 +56,8 @@
             fixLastDrawnPoint();
 
             var clampedPoint = staffarranger.clampMovableHead(mousePos);
+            var drawSize = symboldrawer.getDrawSize(notehead.visualTypes.Quarter);
+            clampedPoint = relativearranger.clampMovableHead(astaff, clampedPoint, (drawSize.width / 2) + symbol.defaultSymbolLMargin);
             symboldrawer.draw(notehead.visualTypes.Quarter, clampedPoint, true);
 
             lastDrawnPoint = clampedPoint;
@@ -77,16 +81,25 @@
 
             } else {
                 var clampedPoint = staffarranger.clampMovableHead(mousePos);
-
+                var drawSize = symboldrawer.getDrawSize(notehead.visualTypes.Quarter);
+                var halfNoteWidth = (drawSize.width / 2);
+                clampedPoint = relativearranger.clampMovableHead(astaff, clampedPoint, halfNoteWidth + symbol.defaultSymbolLMargin);
                 var staffNotePosition = staffarranger.getStaffNotePositionFromY(clampedPoint.y);
+                var lmargin = symbol.defaultSymbolLMargin;
 
-                astaff.addSymbol(new symbol.Note(new notehead.Notehead(staffNotePosition, notehead.visualTypes.Quarter, notehead.directions.Left, false, notehead.accidentals.None)));
-                
-                var symbolMargin = 50;
-                var centerX = astaff.symbols.length * symbolMargin;
+                var leftmostAcceptableNotePosition = relativearranger.getCumulativeNoteSpace(astaff) + lmargin + halfNoteWidth;
+                if (leftmostAcceptableNotePosition < clampedPoint.x) {
+                    lmargin = symbol.defaultSymbolLMargin + (clampedPoint.x - leftmostAcceptableNotePosition);
+                }
+                astaff.addSymbol(new symbol.Note(new notehead.Notehead(staffNotePosition, notehead.visualTypes.Quarter, notehead.directions.Left, false, notehead.accidentals.None),null,null,lmargin));
 
-                var centerPoint = { x: centerX, y: clampedPoint.y };
-                symboldrawer.draw(notehead.visualTypes.Quarter, centerPoint, false);
+                // TODO  replace this with something like the following commented stuff              
+                drawIntersectingSymbols(backgroundrect);
+                //var symbolLMargin = 50;
+                //var centerX = astaff.symbols.length * symbolLMargin;
+
+                //var centerPoint = { x: centerX, y: clampedPoint.y };
+                //symboldrawer.draw(notehead.visualTypes.Quarter, centerPoint, false);
 
                 lastDrawnPoint = clampedPoint;
             }
@@ -102,13 +115,17 @@
         };
 
         var drawIntersectingSymbols = function (r) {
+            var cumulativeX = staffarranger.horizontalMargin;
+
             for (var i = 0; i < astaff.symbols.length; i++) {
                 var symbol = astaff.symbols[i];
 
+                var drawSize = symboldrawer.getDrawSize(symbol.notehead.visualtype);
+                var spaceForSymbol = drawSize.width + symbol.lmargin;
+
                 var staffPosition = symbol.notehead.staffposition;
 
-                var symbolMargin = 50;
-                var centerX = (i + 1) * symbolMargin;
+                var centerX = cumulativeX + (spaceForSymbol - (drawSize.width / 2));
 
                 var centerY = staffarranger.getYFromStaffNotePosition(staffPosition);
                 var centerPoint = { x: centerX, y: centerY };
@@ -117,6 +134,8 @@
                     // need to re-draw this note because part of its bounds was erased
                     symboldrawer.draw(symbol.notehead.visualtype, centerPoint, false);
                 }
+
+                cumulativeX += spaceForSymbol;
             }
         };
 

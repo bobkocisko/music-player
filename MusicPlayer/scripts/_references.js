@@ -31,3 +31,4 @@
 /// <reference path="libs/midi/plugin.js" />
 /// <reference path="libs/midi/soundfont/acoustic_grand_piano-mp3.js" />
 /// <reference path="libs/midi/soundfont/acoustic_grand_piano-ogg.js" />
+/// <reference path="noteadder.js" />
