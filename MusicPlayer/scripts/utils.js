@@ -25,6 +25,11 @@
         this.height = height;
     };
 
+    var _Range = function (start, end) {
+        this.start = start;
+        this.end = end;
+    };
+
     var _rectsIntersect = function (r1, r2) {
         return !(r2.left > r1.right() ||
                  r2.right() < r1.left ||
@@ -43,6 +48,23 @@
             );
     };
 
+    var _rangesIntersect = function (range1, range2) {
+        return !(range2.start > range1.end ||
+                 range2.end < range1.start);
+    };
+
+    var _clampOutsideRange = function (value, range) {
+        // Returns a value that is the left or right bound of the range if the value falls inside the range
+        var rangeMidpoint = (range.end + range.start) / 2;
+        if (value > range.start && value <= rangeMidpoint) {
+            return range.start;
+        }
+        else if (value < range.end && value > rangeMidpoint) {
+            return range.end;
+        }
+        return value;
+    };
+
     var _pointInRect = function (p, r) {
         return !(p.x > r.right() ||
                  p.x < r.left ||
@@ -53,9 +75,12 @@
     return {
         Rectangle: _Rectangle,
         Size: _Size,
+        Range: _Range,
         rectsIntersect: _rectsIntersect,
         getIntersection: _getIntersection,
-        pointInRect: _pointInRect
+        pointInRect: _pointInRect,
+        rangesIntersect: _rangesIntersect,
+        clampOutsideRange: _clampOutsideRange,
     };
 
 });

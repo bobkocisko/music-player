@@ -1,9 +1,9 @@
 ﻿define([], function () {
 
-    var _defaultSymbolLMargin = 25;
+    var _minimumSymbolLMargin = 5;
 
     var _SymbolBase = function (lmargin) {
-        this.lmargin = typeof lmargin !== 'undefined' ? lmargin : _defaultSymbolLMargin;
+        this.lmargin = typeof lmargin !== 'undefined' ? lmargin : _minimumSymbolLMargin;
     }
 
     var _Note = function (notehead, stem, stemOrder, lmargin) {
@@ -29,7 +29,7 @@
     };
 
     return {
-        defaultSymbolLMargin: _defaultSymbolLMargin,
+        minimumSymbolLMargin: _minimumSymbolLMargin,
         Note: _Note,
         Rest: _Rest,
         MeasureBreak: _MeasureBreak,

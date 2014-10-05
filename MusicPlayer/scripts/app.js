@@ -57,7 +57,8 @@
 
             var clampedPoint = staffarranger.clampMovableHead(mousePos);
             var drawSize = symboldrawer.getDrawSize(notehead.visualTypes.Quarter);
-            clampedPoint = relativearranger.clampMovableHead(astaff, clampedPoint, (drawSize.width / 2) + symbol.defaultSymbolLMargin);
+            var clampResults = relativearranger.clampMovableHead(astaff, clampedPoint, (drawSize.width / 2) + symbol.minimumSymbolLMargin);
+            clampedPoint = clampResults.clampedPoint;
             symboldrawer.draw(notehead.visualTypes.Quarter, clampedPoint, true);
 
             lastDrawnPoint = clampedPoint;
@@ -83,17 +84,26 @@
                 var clampedPoint = staffarranger.clampMovableHead(mousePos);
                 var drawSize = symboldrawer.getDrawSize(notehead.visualTypes.Quarter);
                 var halfNoteWidth = (drawSize.width / 2);
-                clampedPoint = relativearranger.clampMovableHead(astaff, clampedPoint, halfNoteWidth + symbol.defaultSymbolLMargin);
+                var clampResults = relativearranger.clampMovableHead(astaff, clampedPoint, halfNoteWidth + symbol.minimumSymbolLMargin);
+                clampedPoint = clampResults.clampedPoint;
                 var staffNotePosition = staffarranger.getStaffNotePositionFromY(clampedPoint.y);
-                var lmargin = symbol.defaultSymbolLMargin;
+                //var lmargin = symbol.minimumSymbolLMargin;
 
-                var leftmostAcceptableNotePosition = relativearranger.getCumulativeNoteSpace(astaff) + lmargin + halfNoteWidth;
-                if (leftmostAcceptableNotePosition < clampedPoint.x) {
-                    lmargin = symbol.defaultSymbolLMargin + (clampedPoint.x - leftmostAcceptableNotePosition);
+                //var leftmostAcceptableNotePosition = relativearranger.getCumulativeNoteSpace(astaff) + lmargin + halfNoteWidth;
+                //if (leftmostAcceptableNotePosition < clampedPoint.x) {
+                //    lmargin = symbol.minimumSymbolLMargin + (clampedPoint.x - leftmostAcceptableNotePosition);
+                //}
+                var newNote = new symbol.Note(new notehead.Notehead(staffNotePosition, notehead.visualTypes.Quarter, notehead.directions.Left, false, notehead.accidentals.None), null, null, clampResults.newLMargin);
+                if (!clampResults.beforeSymbol) {
+                    astaff.addSymbol(newNote);
                 }
-                astaff.addSymbol(new symbol.Note(new notehead.Notehead(staffNotePosition, notehead.visualTypes.Quarter, notehead.directions.Left, false, notehead.accidentals.None),null,null,lmargin));
+                else {
+                    astaff.insertSymbol(clampResults.beforeSymbol, newNote);
+                }
 
                 // TODO  replace this with something like the following commented stuff              
+                backgrounddrawer.clear(backgroundrect);
+                backgrounddrawer.draw(backgroundrect);
                 drawIntersectingSymbols(backgroundrect);
                 //var symbolLMargin = 50;
                 //var centerX = astaff.symbols.length * symbolLMargin;

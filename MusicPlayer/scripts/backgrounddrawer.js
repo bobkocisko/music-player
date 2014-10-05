@@ -33,7 +33,12 @@
         ctx.stroke();
     }
 
+    var _clear = function(clearRect) {
+        ctx.clearRect(clearRect.left, clearRect.top, clearRect.width, clearRect.height);
+    }
+
     return {
-        draw: _draw
+        draw: _draw,
+        clear: _clear
     };
 });

@@ -11,6 +11,13 @@
             this.symbols.push(symbol);
         };
 
+        var insertSymbol = function (beforeSymbol, newSymbol) {
+            var beforeIndex = this.symbols.indexOf(beforeSymbol);
+            if (beforeIndex > -1) {
+                this.symbols.splice(beforeIndex, 0, newSymbol);
+            }
+        }
+
         var removeSymbol = function (symbol) {
             var index = this.symbols.indexOf(symbol);
             if (index > -1) {
@@ -42,6 +49,7 @@
 
         return {
             addSymbol: addSymbol,
+            insertSymbol: insertSymbol,
             removeSymbol: removeSymbol,
             addNotehead: addNotehead,
             removeNotehead: removeNotehead,
