@@ -98,12 +98,15 @@
                     astaff.addSymbol(newNote);
                 }
                 else {
+                    clampResults.beforeSymbol.lmargin -= drawSize.width + newNote.lmargin;
+                    if (clampResults.beforeSymbol.lmargin < symbol.minimumSymbolLMargin) clampResults.beforeSymbol.lmargin = symbol.minimumSymbolLMargin;
                     astaff.insertSymbol(clampResults.beforeSymbol, newNote);
                 }
 
                 // TODO  replace this with something like the following commented stuff              
                 backgrounddrawer.clear(backgroundrect);
                 backgrounddrawer.draw(backgroundrect);
+                playbacktoolbar.drawButtons();
                 drawIntersectingSymbols(backgroundrect);
                 //var symbolLMargin = 50;
                 //var centerX = astaff.symbols.length * symbolLMargin;
