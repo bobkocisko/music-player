@@ -30,6 +30,7 @@
         ctx.moveTo(intersection.left, crispY);
         ctx.lineTo(intersection.right(), crispY);
         ctx.fillStyle = "#000000";
+        ctx.lineWidth = 2;
         ctx.stroke();
     }
 

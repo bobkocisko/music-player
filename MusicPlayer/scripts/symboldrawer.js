@@ -1,49 +1,19 @@
-﻿define(['drawcontext', 'staffarranger', 'utils', 'structure/notehead'], function (drawcontext, staffarranger, utils, notehead) {
-    'use strict';
+﻿define(['noteheaddrawer'], function (noteheaddrawer) {
 
-    var ctx = drawcontext.get();
-
-    var _draw = function (symbol, centerPoint, isPreview) {
-        switch (symbol) {
-            case notehead.visualTypes.Quarter:
-                var height = staffarranger.noteHeight;
-                ctx.beginPath();
-                ctx.arc(centerPoint.x, centerPoint.y, height / 2, 0, 2 * Math.PI);
-                if (isPreview) {
-                    ctx.fillStyle = "rgba(170,170,170, 0.75)";
-                }
-                else {
-                    ctx.fillStyle = "#000000";
-                }
-                ctx.fill();
-                break;
-        }
+    var _draw = function (visualType, centerPoint, isPreview) {
+        return noteheaddrawer.draw(visualType, centerPoint, isPreview);
     };
 
-    var _clear = function (symbol, centerPoint) {
-        switch (symbol) {
-            case notehead.visualTypes.Quarter:
-                var clearRect = _getDrawRect(symbol, centerPoint);
-                ctx.clearRect(clearRect.left, clearRect.top, clearRect.width, clearRect.height);
-                return clearRect;
-        }
+    var _clear = function (visualType, centerPoint) {
+        return noteheaddrawer.clear(visualType, centerPoint);
     };
 
-    var _getDrawRect = function (symbol, centerPoint) {
-        switch (symbol) {
-            case notehead.visualTypes.Quarter:
-                var height = staffarranger.noteHeight + 4; // Need an extra 4 pixels to include 'ghost' pixels from antialiasing
-                var halfHeight = height / 2;
-                return new utils.Rectangle(centerPoint.x - halfHeight, centerPoint.y - halfHeight, height, height);
-        }
+    var _getDrawRect = function (visualType, centerPoint) {
+        return noteheaddrawer.getDrawRect(visualType, centerPoint);
     };
 
-    var _getDrawSize = function (symbol) {
-        switch (symbol) {
-            case notehead.visualTypes.Quarter:
-                var height = staffarranger.noteHeight + 4; // Need an extra 4 pixels to include 'ghost' pixels from antialiasing
-                return new utils.Size(height, height);
-        }
+    var _getDrawSize = function (visualType) {
+        return noteheaddrawer.getDrawSize(visualType);
     };
 
     return {
