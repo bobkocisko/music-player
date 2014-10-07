@@ -47,6 +47,11 @@
 
     var _clear = function (asymbol, centerPoint) {
         var clearRect = _getDrawRect(asymbol, centerPoint);
+        // adjust clear area so that the pixels affected by antialiasing will be properly cleaned up
+        clearRect.left -= 2;
+        clearRect.top -= 2;
+        clearRect.width += 4;
+        clearRect.height += 4;
         ctx.clearRect(clearRect.left, clearRect.top, clearRect.width, clearRect.height);
         return clearRect;
     };
@@ -55,7 +60,7 @@
         if (asymbol.notehead) {
             var drawrect = noteheaddrawer.getDrawRect(asymbol.notehead.visualtype, centerPoint);
             if (asymbol.notehead.isdotted) {
-                var dotendx = drawrect.right() + _spaceBeforeDotCenter + (_dotHeight / 2) + 2;  // 2 for antialiasing buffer
+                var dotendx = drawrect.right() + _spaceBeforeDotCenter + (_dotHeight / 2);
                 var dotendy = drawrect.top + (_dotHeight / 2); // align dot to the top of the note
                 var pointend = new utils.Point(dotendx, dotendy);
                 drawrect = utils.rectUnionPoint(drawrect, pointend);
@@ -77,9 +82,9 @@
                     var stemend = new utils.Point(stemstart.x, stemstart.y - _stemHeight);
                 }
                 if (notedirection == notehead.directions.right) {
-                    stemend.x -= (_stemWidth / 2) - 2; // Extra 2 for antialias pixels
+                    stemend.x -= _stemWidth / 2;
                 } else {  // left
-                    stemend.x += (_stemWidth / 2) + 2; // Extra 2 for antialias pixels
+                    stemend.x += _stemWidth / 2;
                 }
                 drawrect = utils.rectUnionPoint(drawrect, stemend);
             }

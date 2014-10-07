@@ -11,7 +11,7 @@
                 ctx.beginPath();
                 ctx.translate(centerPoint.x, centerPoint.y);
                 ctx.rotate(-Math.PI / 6);
-                ctx.scale(1.3, 1);
+                ctx.scale(1.3, 0.95); // 0.95 to shorten the note slightly so that when it is rotated it will not be too tall
                 ctx.arc(0, 0, height / 2, 2 * Math.PI, 0);
                 ctx.fillStyle = drawcontext.getColor(isPreview);
                 ctx.fill();
@@ -20,20 +20,11 @@
         }
     };
 
-    var _clear = function (visualType, centerPoint) {
-        switch (visualType) {
-            case notehead.visualTypes.quarter:
-                var clearRect = _getDrawRect(visualType, centerPoint);
-                ctx.clearRect(clearRect.left, clearRect.top, clearRect.width, clearRect.height);
-                return clearRect;
-        }
-    };
-
     var _getDrawRect = function (visualType, centerPoint) {
         switch (visualType) {
             case notehead.visualTypes.quarter:
-                var width = (staffarranger.noteHeight * 1.3) + 4; // Need an extra 4 pixels to include 'ghost' pixels from antialiasing
-                var height = staffarranger.noteHeight + 4;
+                var width = staffarranger.noteHeight * 1.3;
+                var height = staffarranger.noteHeight;
                 return new utils.Rectangle(centerPoint.x - width / 2, centerPoint.y - height / 2, width, height);
         }
     };
@@ -41,8 +32,8 @@
     var _getDrawSize = function (visualType) {
         switch (visualType) {
             case notehead.visualTypes.quarter:
-                var width = (staffarranger.noteHeight * 1.3) + 4; // Need an extra 4 pixels to include 'ghost' pixels from antialiasing
-                var height = staffarranger.noteHeight + 4;
+                var width = staffarranger.noteHeight * 1.3;
+                var height = staffarranger.noteHeight;
                 return new utils.Size(width, height);
         }
     };
@@ -68,7 +59,6 @@
 
     return {
         draw: _draw,
-        clear: _clear,
         getDrawRect: _getDrawRect,
         getDrawSize: _getDrawSize,
         getStemAnchorVectors: _getStemAnchorVectors,
