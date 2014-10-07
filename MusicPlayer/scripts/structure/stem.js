@@ -24,5 +24,9 @@
 
     return {
         Stem: _Stem,
+        directions: {
+            up: "up",
+            down: "down",
+        },
     };
 });

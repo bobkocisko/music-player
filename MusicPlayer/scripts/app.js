@@ -37,15 +37,15 @@
 
         var astaff = new staff.Staff(new staffsection.StaffSection());  // Use the default values for StaffSection
 
-        //astaff.addSymbol(new symbol.Note(new notehead.Notehead(0, notehead.visualTypes.Quarter, notehead.directions.Left, false, notehead.accidentals.None)));
-        //astaff.addSymbol(new symbol.Note(new notehead.Notehead(1, notehead.visualTypes.Quarter, notehead.directions.Left, false, notehead.accidentals.None)));
-        //astaff.addSymbol(new symbol.Note(new notehead.Notehead(2, notehead.visualTypes.Quarter, notehead.directions.Left, false, notehead.accidentals.None)));
-        //astaff.addSymbol(new symbol.Note(new notehead.Notehead(3, notehead.visualTypes.Quarter, notehead.directions.Left, false, notehead.accidentals.None)));
-        //astaff.addSymbol(new symbol.Note(new notehead.Notehead(4, notehead.visualTypes.Quarter, notehead.directions.Left, false, notehead.accidentals.None)));
-        //astaff.addSymbol(new symbol.Note(new notehead.Notehead(5, notehead.visualTypes.Quarter, notehead.directions.Left, false, notehead.accidentals.None)));
-        //astaff.addSymbol(new symbol.Note(new notehead.Notehead(6, notehead.visualTypes.Quarter, notehead.directions.Left, false, notehead.accidentals.None)));
-        //astaff.addSymbol(new symbol.Note(new notehead.Notehead(7, notehead.visualTypes.Quarter, notehead.directions.Left, false, notehead.accidentals.None)));
-        //astaff.addSymbol(new symbol.Note(new notehead.Notehead(8, notehead.visualTypes.Quarter, notehead.directions.Left, false, notehead.accidentals.None)));
+        //astaff.addSymbol(new symbol.Note(new notehead.Notehead(0, notehead.visualTypes.quarter, notehead.directions.Left, false, notehead.accidentals.None)));
+        //astaff.addSymbol(new symbol.Note(new notehead.Notehead(1, notehead.visualTypes.quarter, notehead.directions.Left, false, notehead.accidentals.None)));
+        //astaff.addSymbol(new symbol.Note(new notehead.Notehead(2, notehead.visualTypes.quarter, notehead.directions.Left, false, notehead.accidentals.None)));
+        //astaff.addSymbol(new symbol.Note(new notehead.Notehead(3, notehead.visualTypes.quarter, notehead.directions.Left, false, notehead.accidentals.None)));
+        //astaff.addSymbol(new symbol.Note(new notehead.Notehead(4, notehead.visualTypes.quarter, notehead.directions.Left, false, notehead.accidentals.None)));
+        //astaff.addSymbol(new symbol.Note(new notehead.Notehead(5, notehead.visualTypes.quarter, notehead.directions.Left, false, notehead.accidentals.None)));
+        //astaff.addSymbol(new symbol.Note(new notehead.Notehead(6, notehead.visualTypes.quarter, notehead.directions.Left, false, notehead.accidentals.None)));
+        //astaff.addSymbol(new symbol.Note(new notehead.Notehead(7, notehead.visualTypes.quarter, notehead.directions.Left, false, notehead.accidentals.None)));
+        //astaff.addSymbol(new symbol.Note(new notehead.Notehead(8, notehead.visualTypes.quarter, notehead.directions.Left, false, notehead.accidentals.None)));
 
         var canvas = document.getElementById("myCanvas");
         canvas.onmousemove = function (e) {
@@ -56,10 +56,10 @@
             fixLastDrawnPoint();
 
             var clampedPoint = staffarranger.clampMovableHead(mousePos);
-            var drawSize = symboldrawer.getDrawSize(notehead.visualTypes.Quarter);
+            var drawSize = symboldrawer.getDrawSize(notehead.visualTypes.quarter);
             var clampResults = relativearranger.clampMovableHead(astaff, clampedPoint, (drawSize.width / 2) + symbol.minimumSymbolLMargin);
             clampedPoint = clampResults.clampedPoint;
-            symboldrawer.draw(notehead.visualTypes.Quarter, clampedPoint, true);
+            symboldrawer.draw(notehead.visualTypes.quarter, clampedPoint, true);
 
             lastDrawnPoint = clampedPoint;
 
@@ -82,7 +82,7 @@
 
             } else {
                 var clampedPoint = staffarranger.clampMovableHead(mousePos);
-                var drawSize = symboldrawer.getDrawSize(notehead.visualTypes.Quarter);
+                var drawSize = symboldrawer.getDrawSize(notehead.visualTypes.quarter);
                 var halfNoteWidth = (drawSize.width / 2);
                 var clampResults = relativearranger.clampMovableHead(astaff, clampedPoint, halfNoteWidth + symbol.minimumSymbolLMargin);
                 clampedPoint = clampResults.clampedPoint;
@@ -93,7 +93,7 @@
                 //if (leftmostAcceptableNotePosition < clampedPoint.x) {
                 //    lmargin = symbol.minimumSymbolLMargin + (clampedPoint.x - leftmostAcceptableNotePosition);
                 //}
-                var newNote = new symbol.Note(new notehead.Notehead(staffNotePosition, notehead.visualTypes.Quarter, notehead.directions.Left, false, notehead.accidentals.None), null, null, clampResults.newLMargin);
+                var newNote = new symbol.Note(new notehead.Notehead(staffNotePosition, notehead.visualTypes.quarter, notehead.directions.left, false, notehead.accidentals.none), null, null, clampResults.newLMargin);
                 if (!clampResults.beforeSymbol) {
                     astaff.addSymbol(newNote);
                 }
@@ -112,7 +112,7 @@
                 //var centerX = astaff.symbols.length * symbolLMargin;
 
                 //var centerPoint = { x: centerX, y: clampedPoint.y };
-                //symboldrawer.draw(notehead.visualTypes.Quarter, centerPoint, false);
+                //symboldrawer.draw(notehead.visualTypes.quarter, centerPoint, false);
 
                 lastDrawnPoint = clampedPoint;
             }
@@ -121,7 +121,7 @@
         };
 
         var fixLastDrawnPoint = function () {
-            var clearRect = symboldrawer.clear(notehead.visualTypes.Quarter, lastDrawnPoint);
+            var clearRect = symboldrawer.clear(notehead.visualTypes.quarter, lastDrawnPoint);
             backgrounddrawer.draw(clearRect);
 
             drawIntersectingSymbols(clearRect);

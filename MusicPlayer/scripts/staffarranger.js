@@ -1,4 +1,4 @@
-﻿define(['viewport', 'utils'], function (viewport, utils) {
+﻿define(['viewport', 'utils','structure/stem'], function (viewport, utils,stem) {
 
     var staffHeight = 120;
     var _horizontalMargin = 20;
@@ -74,6 +74,17 @@
         return staffList;
     };
 
+    var _getStemDirection = function (asymbol) {
+        if (asymbol.notehead && asymbol.stem) {
+            if (asymbol.notehead.staffposition < 7) {
+                return stem.directions.down;
+            }
+            else {
+                return stem.directions.up;
+            }
+        }
+    };
+
     return {
         horizontalMargin: _horizontalMargin,
         clampMovableHead: _clampMovableHead,
@@ -82,5 +93,6 @@
         noteHeight: _noteHeight,
         getStaffNotePositionFromY: _getStaffNotePositionFromY,
         getYFromStaffNotePosition: _getYFromStaffNotePosition,
+        getStemDirection: _getStemDirection,
     };
 });
