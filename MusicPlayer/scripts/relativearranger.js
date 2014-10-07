@@ -13,7 +13,7 @@
 
         for (var i = 0; i < staff.symbols.length; i++) {
             var asymbol = staff.symbols[i];
-            var drawSize = symboldrawer.getDrawSize(asymbol.notehead.visualtype);
+            var drawSize = symboldrawer.getDrawSize(asymbol);
             var spaceForSymbol = drawSize.width + asymbol.lmargin;
 
             var currentExclusionRange = _getExclusionRange(cumulativeX, asymbol.lmargin, drawSize.width, newSymbolWidth);
@@ -80,9 +80,9 @@
     var _getCumulativeNoteSpace = function (staff) {
         var cumulativeX = staffarranger.horizontalMargin;
         for (var i = 0; i < staff.symbols.length; i++) {
-            var symbol = staff.symbols[i];
-            var drawSize = symboldrawer.getDrawSize(symbol.notehead.visualtype);
-            var spaceForSymbol = drawSize.width + symbol.lmargin;
+            var asymbol = staff.symbols[i];
+            var drawSize = symboldrawer.getDrawSize(asymbol);
+            var spaceForSymbol = drawSize.width + asymbol.lmargin;
             cumulativeX += spaceForSymbol;
         }
 

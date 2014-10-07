@@ -11,8 +11,8 @@
                 ctx.beginPath();
                 ctx.translate(centerPoint.x, centerPoint.y);
                 ctx.rotate(-Math.PI / 6);
-                ctx.scale(1, 0.7);
-                ctx.arc(0, 0, height * 0.6, 2 * Math.PI, 0);
+                ctx.scale(1.3, 1);
+                ctx.arc(0, 0, height / 2, 2 * Math.PI, 0);
                 ctx.fillStyle = drawcontext.getColor(isPreview);
                 ctx.fill();
                 ctx.restore();
@@ -32,17 +32,37 @@
     var _getDrawRect = function (visualType, centerPoint) {
         switch (visualType) {
             case notehead.visualTypes.quarter:
-                var height = staffarranger.noteHeight + 4; // Need an extra 4 pixels to include 'ghost' pixels from antialiasing
-                var halfHeight = height / 2;
-                return new utils.Rectangle(centerPoint.x - halfHeight, centerPoint.y - halfHeight, height, height);
+                var width = (staffarranger.noteHeight * 1.3) + 4; // Need an extra 4 pixels to include 'ghost' pixels from antialiasing
+                var height = staffarranger.noteHeight + 4;
+                return new utils.Rectangle(centerPoint.x - width / 2, centerPoint.y - height / 2, width, height);
         }
     };
 
     var _getDrawSize = function (visualType) {
         switch (visualType) {
             case notehead.visualTypes.quarter:
-                var height = staffarranger.noteHeight + 4; // Need an extra 4 pixels to include 'ghost' pixels from antialiasing
-                return new utils.Size(height, height);
+                var width = (staffarranger.noteHeight * 1.3) + 4; // Need an extra 4 pixels to include 'ghost' pixels from antialiasing
+                var height = staffarranger.noteHeight + 4;
+                return new utils.Size(width, height);
+        }
+    };
+
+    var _getStemAnchorVectors = function (visualType) {
+        // Returns the offsets from the center of the head where the stem should be anchored
+        var width = (staffarranger.noteHeight * 1.2);
+        var height = staffarranger.noteHeight;
+        switch (visualType) {
+            case notehead.visualTypes.quarter:
+                return {
+                    left: {
+                        x: width / 2,
+                        y: -height * 0.1,
+                        },
+                    right: {
+                        x: -width / 2,
+                        y: height * 0.1,
+                    },
+                };
         }
     };
 
@@ -51,5 +71,6 @@
         clear: _clear,
         getDrawRect: _getDrawRect,
         getDrawSize: _getDrawSize,
+        getStemAnchorVectors: _getStemAnchorVectors,
     };
 });

@@ -30,6 +30,11 @@
         this.end = end;
     };
 
+    var _Point = function (x, y) {
+        this.x = x;
+        this.y = y;
+    };
+
     var _rectsIntersect = function (r1, r2) {
         return !(r2.left > r1.right() ||
                  r2.right() < r1.left ||
@@ -65,6 +70,28 @@
         return value;
     };
 
+    var _rectUnionPoint = function (r, p) {
+        // If the specified point is not already inside the rectangle, returns a new rectangle that contains the given point
+        if (_pointInRect(p, r)) {
+            return r;
+        }
+        var newRect = new _Rectangle(r.left, r.top, r.width, r.height);
+        if (p.x < newRect.left) {
+            newRect.left = p.x;
+            newRect.width = r.right() - newRect.left;
+        } else if (p.x > newRect.right()) {
+            newRect.width = p.x - newRect.left;
+        }
+        if (p.y < newRect.top) {
+            newRect.top = p.y;
+            newRect.height = r.bottom() - newRect.top;
+        } else if (p.y > newRect.bottom()) {
+            newRect.height = p.y - newRect.top;
+        }
+
+        return newRect;
+    };
+
     var _pointInRect = function (p, r) {
         return !(p.x > r.right() ||
                  p.x < r.left ||
@@ -72,15 +99,25 @@
                  p.y < r.top);
     }
 
+    var _pointPlusVector = function (p, v) {
+        return new _Point(
+            p.x + v.x,
+            p.y + v.y
+        );
+    };
+
     return {
         Rectangle: _Rectangle,
         Size: _Size,
         Range: _Range,
+        Point: _Point,
         rectsIntersect: _rectsIntersect,
         getIntersection: _getIntersection,
         pointInRect: _pointInRect,
         rangesIntersect: _rangesIntersect,
         clampOutsideRange: _clampOutsideRange,
+        pointPlusVector: _pointPlusVector,
+        rectUnionPoint: _rectUnionPoint,
     };
 
 });

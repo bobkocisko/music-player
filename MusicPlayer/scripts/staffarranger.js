@@ -1,4 +1,4 @@
-﻿define(['viewport', 'utils','structure/stem'], function (viewport, utils,stem) {
+﻿define(['viewport', 'utils', 'structure/stem', 'structure/notehead'], function (viewport, utils, stem, notehead) {
 
     var staffHeight = 120;
     var _horizontalMargin = 20;
@@ -74,14 +74,21 @@
         return staffList;
     };
 
-    var _getStemDirection = function (asymbol) {
-        if (asymbol.notehead && asymbol.stem) {
-            if (asymbol.notehead.staffposition < 7) {
-                return stem.directions.down;
-            }
-            else {
-                return stem.directions.up;
-            }
+    var _getDefaultStemDirection = function (staffNotePosition) {
+        if (staffNotePosition >= 7) {
+            return stem.directions.down;
+        }
+        else {
+            return stem.directions.up;
+        }
+    };
+
+    var _getDefaultNoteDirection = function (staffNotePosition) {
+        if (staffNotePosition >= 7) {
+            return notehead.directions.right;
+        }
+        else {
+            return notehead.directions.left;
         }
     };
 
@@ -93,6 +100,7 @@
         noteHeight: _noteHeight,
         getStaffNotePositionFromY: _getStaffNotePositionFromY,
         getYFromStaffNotePosition: _getYFromStaffNotePosition,
-        getStemDirection: _getStemDirection,
+        getDefaultStemDirection: _getDefaultStemDirection,
+        getDefaultNoteDirection: _getDefaultNoteDirection,
     };
 });

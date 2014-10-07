@@ -10,19 +10,19 @@
     return {
         Notehead: _Notehead,
         visualTypes: {
-            whole: "Whole",
-            half: "Half",
-            quarter: "Quarter",
+            whole: "whole",
+            half: "half",
+            quarter: "quarter",
         },
         directions: {
-            left: "Left",
-            right: "Right",
+            left: "left",
+            right: "right",
         },
         accidentals: {
-            none: "None",
-            flat: "Flat",
-            sharp: "Sharp",
-            natural: "Natural"
+            none: "none",
+            flat: "flat",
+            sharp: "sharp",
+            natural: "natural"
         }
     };
 });

@@ -1,36 +1,78 @@
-﻿define(['drawcontext', 'noteheaddrawer', 'symbol', 'staffarranger', 'structure/stem'], function (drawcontext, noteheaddrawer, symbol, staffarranger, stem) {
+﻿define(['drawcontext', 'noteheaddrawer', 'structure/symbol', 'staffarranger', 'structure/stem', 'structure/notehead', 'utils'], function (drawcontext, noteheaddrawer, symbol, staffarranger, stem, notehead, utils) {
 
     var ctx = drawcontext.get();
+
+    var _stemHeight = staffarranger.noteHeight * 3;
+    var _stemWidth = staffarranger.noteHeight * 0.0882;
 
     var _draw = function (asymbol, centerPoint, isPreview) {
         if (asymbol.notehead) {
             noteheaddrawer.draw(asymbol.notehead.visualtype, centerPoint, isPreview);
             var headrect = noteheaddrawer.getDrawRect(asymbol.notehead.visualtype, centerPoint);
             if (asymbol.stem) {
-                var stemdirection = staffarranger.getStemDirection(asymbol);
+                var staffNotePosition = staffarranger.getStaffNotePositionFromY(centerPoint.y);
+                var notedirection = asymbol.notehead.direction;
+                if (!notedirection) notedirection = staffarranger.getDefaultNoteDirection(staffNotePosition);
+                var stemvector = noteheaddrawer.getStemAnchorVectors(asymbol.notehead.visualtype)[notedirection];
+                var stemstart = utils.pointPlusVector(centerPoint, stemvector);
                 ctx.beginPath();
+                ctx.moveTo(stemstart.x, stemstart.y);
+                var stemdirection = asymbol.stem.direction;
+                if (!stemdirection) {
+                    stemdirection = staffarranger.getDefaultStemDirection(staffNotePosition);
+                }
                 if (stemdirection == stem.directions.down) {
-                    // TODO
+                    ctx.lineTo(stemstart.x, stemstart.y + _stemHeight);
                 }
                 else {  // stem up
-                    ctx.moveTo();
-                    ctx.lineTo();
+                    ctx.lineTo(stemstart.x, stemstart.y - _stemHeight);
                 }
+                ctx.strokeStyle = drawcontext.getColor(isPreview);
+                ctx.lineWidth = _stemWidth;
                 ctx.stroke();
             }
         }
     };
 
     var _clear = function (asymbol, centerPoint) {
-        return noteheaddrawer.clear(visualType, centerPoint);
+        var clearRect = _getDrawRect(asymbol, centerPoint);
+        ctx.clearRect(clearRect.left, clearRect.top, clearRect.width, clearRect.height);
+        return clearRect;
     };
 
     var _getDrawRect = function (asymbol, centerPoint) {
-        return noteheaddrawer.getDrawRect(visualType, centerPoint);
+        if (asymbol.notehead) {
+            var headrect = noteheaddrawer.getDrawRect(asymbol.notehead.visualtype, centerPoint);
+            if (asymbol.stem) {
+                var staffNotePosition = staffarranger.getStaffNotePositionFromY(centerPoint.y);
+                var notedirection = asymbol.notehead.direction;
+                if (!notedirection) notedirection = staffarranger.getDefaultNoteDirection(staffNotePosition);
+                var stemvector = noteheaddrawer.getStemAnchorVectors(asymbol.notehead.visualtype)[notedirection];
+                var stemstart = utils.pointPlusVector(centerPoint, stemvector);
+                var stemdirection = asymbol.stem.direction;
+                if (!stemdirection) {
+                    stemdirection = staffarranger.getDefaultStemDirection(staffNotePosition);
+                }
+                if (stemdirection == stem.directions.down) {
+                    var stemend = new utils.Point(stemstart.x, stemstart.y + _stemHeight);
+                }
+                else {  // stem up
+                    var stemend = new utils.Point(stemstart.x, stemstart.y - _stemHeight);
+                }
+                if (notedirection == notehead.directions.right) {
+                    stemend.x -= (_stemWidth / 2) - 2; // Extra 2 for antialias pixels
+                } else {  // left
+                    stemend.x += (_stemWidth / 2) + 2; // Extra 2 for antialias pixels
+                }
+                return utils.rectUnionPoint(headrect, stemend);
+            }
+            return headrect;
+        }
     };
 
     var _getDrawSize = function (asymbol) {
-        return noteheaddrawer.getDrawSize(visualType);
+        var drawRect = _getDrawRect(asymbol, new utils.Point(0, 0));
+        return new utils.Size(drawRect.width, drawRect.height);
     };
 
     return {

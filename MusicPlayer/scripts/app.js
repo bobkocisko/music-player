@@ -12,6 +12,7 @@
     'structure/staffsection',
     'structure/notehead',
     'structure/symbol',
+    'structure/stem',
 ],
     function (backgrounddrawer,
         viewport,
@@ -26,7 +27,8 @@
         staff,
         staffsection,
         notehead,
-        symbol
+        symbol,
+        stem
         ) {
         'use strict';
 
@@ -36,6 +38,7 @@
         };
 
         var astaff = new staff.Staff(new staffsection.StaffSection());  // Use the default values for StaffSection
+        var previewsymbol = new symbol.Note(new notehead.Notehead(null, notehead.visualTypes.quarter, null, false, notehead.accidentals.none), new stem.Stem(null), 0, symbol.minimumSymbolLMargin);
 
         //astaff.addSymbol(new symbol.Note(new notehead.Notehead(0, notehead.visualTypes.quarter, notehead.directions.Left, false, notehead.accidentals.None)));
         //astaff.addSymbol(new symbol.Note(new notehead.Notehead(1, notehead.visualTypes.quarter, notehead.directions.Left, false, notehead.accidentals.None)));
@@ -56,10 +59,10 @@
             fixLastDrawnPoint();
 
             var clampedPoint = staffarranger.clampMovableHead(mousePos);
-            var drawSize = symboldrawer.getDrawSize(notehead.visualTypes.quarter);
+            var drawSize = symboldrawer.getDrawSize(previewsymbol);
             var clampResults = relativearranger.clampMovableHead(astaff, clampedPoint, (drawSize.width / 2) + symbol.minimumSymbolLMargin);
             clampedPoint = clampResults.clampedPoint;
-            symboldrawer.draw(notehead.visualTypes.quarter, clampedPoint, true);
+            symboldrawer.draw(previewsymbol, clampedPoint, true);
 
             lastDrawnPoint = clampedPoint;
 
@@ -82,7 +85,7 @@
 
             } else {
                 var clampedPoint = staffarranger.clampMovableHead(mousePos);
-                var drawSize = symboldrawer.getDrawSize(notehead.visualTypes.quarter);
+                var drawSize = symboldrawer.getDrawSize(previewsymbol);
                 var halfNoteWidth = (drawSize.width / 2);
                 var clampResults = relativearranger.clampMovableHead(astaff, clampedPoint, halfNoteWidth + symbol.minimumSymbolLMargin);
                 clampedPoint = clampResults.clampedPoint;
@@ -93,7 +96,9 @@
                 //if (leftmostAcceptableNotePosition < clampedPoint.x) {
                 //    lmargin = symbol.minimumSymbolLMargin + (clampedPoint.x - leftmostAcceptableNotePosition);
                 //}
-                var newNote = new symbol.Note(new notehead.Notehead(staffNotePosition, notehead.visualTypes.quarter, notehead.directions.left, false, notehead.accidentals.none), null, null, clampResults.newLMargin);
+                var stemdirection = staffarranger.getDefaultStemDirection(staffNotePosition);
+                var notedirection = staffarranger.getDefaultNoteDirection(staffNotePosition);
+                var newNote = new symbol.Note(new notehead.Notehead(staffNotePosition, notehead.visualTypes.quarter, notedirection, false, notehead.accidentals.none), new stem.Stem(stemdirection), 0, clampResults.newLMargin);
                 if (!clampResults.beforeSymbol) {
                     astaff.addSymbol(newNote);
                 }
@@ -121,7 +126,7 @@
         };
 
         var fixLastDrawnPoint = function () {
-            var clearRect = symboldrawer.clear(notehead.visualTypes.quarter, lastDrawnPoint);
+            var clearRect = symboldrawer.clear(previewsymbol, lastDrawnPoint);
             backgrounddrawer.draw(clearRect);
 
             drawIntersectingSymbols(clearRect);
@@ -131,21 +136,21 @@
             var cumulativeX = staffarranger.horizontalMargin;
 
             for (var i = 0; i < astaff.symbols.length; i++) {
-                var symbol = astaff.symbols[i];
+                var asymbol = astaff.symbols[i];
 
-                var drawSize = symboldrawer.getDrawSize(symbol.notehead.visualtype);
-                var spaceForSymbol = drawSize.width + symbol.lmargin;
+                var drawSize = symboldrawer.getDrawSize(asymbol);
+                var spaceForSymbol = drawSize.width + asymbol.lmargin;
 
-                var staffPosition = symbol.notehead.staffposition;
+                var staffPosition = asymbol.notehead.staffposition;
 
                 var centerX = cumulativeX + (spaceForSymbol - (drawSize.width / 2));
 
                 var centerY = staffarranger.getYFromStaffNotePosition(staffPosition);
                 var centerPoint = { x: centerX, y: centerY };
 
-                if (utils.rectsIntersect(symboldrawer.getDrawRect(symbol.notehead.visualtype, centerPoint), r)) {
+                if (utils.rectsIntersect(symboldrawer.getDrawRect(asymbol, centerPoint), r)) {
                     // need to re-draw this note because part of its bounds was erased
-                    symboldrawer.draw(symbol.notehead.visualtype, centerPoint, false);
+                    symboldrawer.draw(asymbol, centerPoint, false);
                 }
 
                 cumulativeX += spaceForSymbol;
