@@ -4,11 +4,22 @@
 
     var _stemHeight = staffarranger.noteHeight * 3;
     var _stemWidth = staffarranger.noteHeight * 0.0882;
+    var _spaceBeforeDotCenter = staffarranger.noteHeight / 2;
+    var _dotHeight = staffarranger.noteHeight / 2;
 
     var _draw = function (asymbol, centerPoint, isPreview) {
         if (asymbol.notehead) {
             noteheaddrawer.draw(asymbol.notehead.visualtype, centerPoint, isPreview);
             var headrect = noteheaddrawer.getDrawRect(asymbol.notehead.visualtype, centerPoint);
+            if (asymbol.notehead.isdotted) {
+                var drawcolor = drawcontext.getColor(isPreview);
+                var dotx = headrect.right() + _spaceBeforeDotCenter;
+                var doty = headrect.top + (_dotHeight / 2); // align dot to the top of the note
+                ctx.beginPath();
+                ctx.arc(dotx, doty, _dotHeight / 2, 2 * Math.PI, 0);
+                ctx.fillStyle = drawcolor;
+                ctx.fill();
+            }
             if (asymbol.stem) {
                 var staffNotePosition = staffarranger.getStaffNotePositionFromY(centerPoint.y);
                 var notedirection = asymbol.notehead.direction;
@@ -27,7 +38,7 @@
                 else {  // stem up
                     ctx.lineTo(stemstart.x, stemstart.y - _stemHeight);
                 }
-                ctx.strokeStyle = drawcontext.getColor(isPreview);
+                ctx.strokeStyle = drawcolor || drawcontext.getColor(isPreview);
                 ctx.lineWidth = _stemWidth;
                 ctx.stroke();
             }
@@ -42,7 +53,13 @@
 
     var _getDrawRect = function (asymbol, centerPoint) {
         if (asymbol.notehead) {
-            var headrect = noteheaddrawer.getDrawRect(asymbol.notehead.visualtype, centerPoint);
+            var drawrect = noteheaddrawer.getDrawRect(asymbol.notehead.visualtype, centerPoint);
+            if (asymbol.notehead.isdotted) {
+                var dotendx = drawrect.right() + _spaceBeforeDotCenter + (_dotHeight / 2) + 2;  // 2 for antialiasing buffer
+                var dotendy = drawrect.top + (_dotHeight / 2); // align dot to the top of the note
+                var pointend = new utils.Point(dotendx, dotendy);
+                drawrect = utils.rectUnionPoint(drawrect, pointend);
+            }
             if (asymbol.stem) {
                 var staffNotePosition = staffarranger.getStaffNotePositionFromY(centerPoint.y);
                 var notedirection = asymbol.notehead.direction;
@@ -64,9 +81,9 @@
                 } else {  // left
                     stemend.x += (_stemWidth / 2) + 2; // Extra 2 for antialias pixels
                 }
-                return utils.rectUnionPoint(headrect, stemend);
+                drawrect = utils.rectUnionPoint(drawrect, stemend);
             }
-            return headrect;
+            return drawrect;
         }
     };
 

@@ -6,11 +6,12 @@
         this.lmargin = typeof lmargin !== 'undefined' ? lmargin : _minimumSymbolLMargin;
     }
 
-    var _Note = function (notehead, stem, stemOrder, lmargin) {
+    var _Note = function (notehead, stem, stemOrder, flagCount, lmargin) {
         _SymbolBase.call(this, lmargin);
         this.notehead = notehead;
         this.stem = stem;
-        this.stemOrder = stemOrder; // Order on stem (0 is bottom of stem)
+        this.stemorder = stemOrder; // Order on stem (0 is bottom of stem)
+        this.flagcount = flagCount;
     };
 
     var _Rest = function (type, lmargin) {
