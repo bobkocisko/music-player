@@ -1,6 +1,6 @@
 ﻿define(['staffarranger', 'symboldrawer', 'structure/symbol', 'utils'], function (staffarranger, symboldrawer, symbol, utils) {
 
-    var _clampMovableHead = function (staff, point, newSymbolWidth) {
+    var _clampMovableHead = function (staff, point, newSymbolXUnitRect) {
         var x = point.x, y = point.y;
         var beforeSymbol = null;
         var newLMargin = symbol.minimumSymbolLMargin;
@@ -8,16 +8,17 @@
         var clamped = false;
 
         var cumulativeX = staffarranger.horizontalMargin;
-        var lastExclusionRange = _getMarginExclusionRange(newSymbolWidth);
+        var lastExclusionRange = _getMarginExclusionRange(newSymbolXUnitRect);
         var lastSymbolCenter = staffarranger.horizontalMargin;
 
         for (var i = 0; i < staff.symbols.length; i++) {
             var asymbol = staff.symbols[i];
-            var drawSize = symboldrawer.getDrawSize(asymbol);
-            var spaceForSymbol = drawSize.width + asymbol.lmargin;
+            var centerY = staffarranger.getYFromStaffNotePosition(asymbol.notehead.staffposition);
+            var drawXUnitRect = symboldrawer.getDrawRect(asymbol, { x: 0, y: centerY });
+            var spaceForSymbol = drawXUnitRect.width + asymbol.lmargin;
 
-            var currentExclusionRange = _getExclusionRange(cumulativeX, asymbol.lmargin, drawSize.width, newSymbolWidth);
-            var symbolCenter = cumulativeX + (spaceForSymbol - (drawSize.width / 2));
+            var currentExclusionRange = _getExclusionRange(cumulativeX, asymbol.lmargin, drawXUnitRect.width, newSymbolXUnitRect);
+            var symbolCenter = cumulativeX + asymbol.lmargin - drawXUnitRect.left;
 
             if (symbolCenter > point.x) {
 
@@ -29,7 +30,7 @@
                     // TODO: if i is 0, clamp to right of range only (because left of range is absolute 0)
                     x = utils.clampOutsideRange(x, lastExclusionRange);
                     x = utils.clampOutsideRange(x, currentExclusionRange);
-                    newLMargin = x - (newSymbolWidth / 2) - cumulativeX;
+                    newLMargin = x + newSymbolXUnitRect.left - cumulativeX;
                 }
                 beforeSymbol = asymbol;
                 clamped = true;
@@ -42,11 +43,11 @@
         }
 
         if (!clamped) { 
-            if ((cumulativeX + symbol.minimumSymbolLMargin + (newSymbolWidth / 2))  > point.x) {
-                x = cumulativeX + symbol.minimumSymbolLMargin + (newSymbolWidth / 2);
+            if ((cumulativeX + symbol.minimumSymbolLMargin - newSymbolXUnitRect.left)  > point.x) {
+                x = cumulativeX + symbol.minimumSymbolLMargin - newSymbolXUnitRect.left;
             }
             else {
-                newLMargin = x - (newSymbolWidth / 2) - cumulativeX;
+                newLMargin = x + newSymbolXUnitRect.left - cumulativeX;
             }
         }
 
@@ -60,20 +61,19 @@
         };
     };
 
-    var _getMarginExclusionRange = function (newSymbolWidth) {
+    var _getMarginExclusionRange = function (newSymbolXUnitRect) {
         return {
             start: 0,
-            end: staffarranger.horizontalMargin + newSymbolWidth / 2,
+            end: staffarranger.horizontalMargin - newSymbolXUnitRect.left,
         };
     };
 
-    var _getExclusionRange = function (cumulativeX, symbolLMargin, symbolWidth, newSymbolWidth) {
+    var _getExclusionRange = function (cumulativeX, symbolLMargin, symbolWidth, newSymbolXUnitRect) {
         var symbolLeft = cumulativeX + symbolLMargin;
         var symbolRight = symbolLeft + symbolWidth;
-        var spaceNeeded = symbol.minimumSymbolLMargin + (newSymbolWidth / 2);
         return {
-            start: symbolLeft - spaceNeeded,
-            end: symbolRight + spaceNeeded,
+            start: symbolLeft - symbol.minimumSymbolLMargin - newSymbolXUnitRect.right(),
+            end: symbolRight + symbol.minimumSymbolLMargin - newSymbolXUnitRect.left,
         };
     };
 

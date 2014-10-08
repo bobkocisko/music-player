@@ -123,15 +123,9 @@
             }
         };
 
-        var _getDrawSize = function (asymbol) {
-            var drawRect = _getDrawRect(asymbol, new utils.Point(0, 0));
-            return new utils.Size(drawRect.width, drawRect.height);
-        };
-
         return {
             draw: _draw,
             clear: _clear,
             getDrawRect: _getDrawRect,
-            getDrawSize: _getDrawSize,
         };
     });

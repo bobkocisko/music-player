@@ -24,7 +24,7 @@
 
     var _getDrawRect = function (anchorPoint, stemdirection) {
         var left = anchorPoint.x;
-        var width = 27 * _flagScale;
+        var width = 15 * _flagScale;
         var height = 45 * _flagScale;
         if (stemdirection == stem.directions.up) {
             var top = anchorPoint.y;
