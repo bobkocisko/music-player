@@ -94,11 +94,11 @@
     <Content Include="scripts\structure\stem.js" />
     <Content Include="scripts\structure\symbol.js" />
     <Content Include="scripts\structure\symbolattachment.js" />
+    <Content Include="scripts\selector.js" />
     <Content Include="scripts\symboldrawer.js" />
     <Content Include="scripts\noteheaddrawer.js" />
     <Content Include="scripts\relativearranger.js" />
     <Content Include="scripts\staffarranger.js" />
-    <Content Include="scripts\symbols.js" />
     <Content Include="scripts\utils.js" />
     <Content Include="scripts\viewport.js" />
     <None Include="scripts\_references.js" />
