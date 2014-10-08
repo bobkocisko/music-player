@@ -33,3 +33,4 @@
 /// <reference path="noteadder.js" />
 /// <reference path="symboldrawer.js" />
 /// <reference path="noteheaddrawer.js" />
+/// <reference path="flagdrawer.js" />

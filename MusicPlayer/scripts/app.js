@@ -38,7 +38,7 @@
         };
 
         var astaff = new staff.Staff(new staffsection.StaffSection());  // Use the default values for StaffSection
-        var previewsymbol = new symbol.Note(new notehead.Notehead(null, notehead.visualTypes.quarter, null, true, notehead.accidentals.none), new stem.Stem(null), 0, 0, symbol.minimumSymbolLMargin);
+        var previewsymbol = new symbol.Note(new notehead.Notehead(null, notehead.visualTypes.quarter, null, false, notehead.accidentals.none), new stem.Stem(null), 0, 1, symbol.minimumSymbolLMargin);
 
         //astaff.addSymbol(new symbol.Note(new notehead.Notehead(0, notehead.visualTypes.quarter, notehead.directions.Left, false, notehead.accidentals.None)));
         //astaff.addSymbol(new symbol.Note(new notehead.Notehead(1, notehead.visualTypes.quarter, notehead.directions.Left, false, notehead.accidentals.None)));
@@ -104,7 +104,7 @@
                 //}
                 var stemdirection = staffarranger.getDefaultStemDirection(staffNotePosition);
                 var notedirection = staffarranger.getDefaultNoteDirection(staffNotePosition);
-                var newNote = new symbol.Note(new notehead.Notehead(staffNotePosition, notehead.visualTypes.quarter, notedirection, true, notehead.accidentals.none), new stem.Stem(stemdirection), 0, 0, clampResults.newLMargin);
+                var newNote = new symbol.Note(new notehead.Notehead(staffNotePosition, notehead.visualTypes.quarter, notedirection, false, notehead.accidentals.none), new stem.Stem(stemdirection), 0, 1, clampResults.newLMargin);
                 if (!clampResults.beforeSymbol) {
                     astaff.addSymbol(newNote);
                 }

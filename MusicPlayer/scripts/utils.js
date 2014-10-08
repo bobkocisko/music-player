@@ -92,6 +92,26 @@
         return newRect;
     };
 
+    var _rectUnionRect = function (r1, r2) {
+        var newRect = new _Rectangle(r1.left, r1.top, r1.width, r1.height);
+
+        if (r2.left < newRect.left) {
+            newRect.left = r2.left;
+        }
+        if (r2.right() > newRect.right()) {
+            newRect.width = r2.right() - newRect.left;
+        }
+
+        if (r2.top < newRect.top) {
+            newRect.top = r2.top;
+        }
+        if (r2.bottom() > newRect.bottom()) {
+            newRect.height = r2.bottom() - newRect.top;
+        }
+
+        return newRect;
+    };
+
     var _pointInRect = function (p, r) {
         return !(p.x > r.right() ||
                  p.x < r.left ||
@@ -118,6 +138,7 @@
         clampOutsideRange: _clampOutsideRange,
         pointPlusVector: _pointPlusVector,
         rectUnionPoint: _rectUnionPoint,
+        rectUnionRect: _rectUnionRect,
     };
 
 });

@@ -69,6 +69,7 @@
     <Content Include="scripts\app.js" />
     <Content Include="scripts\backgrounddrawer.js" />
     <Content Include="scripts\drawcontext.js" />
+    <Content Include="scripts\flagdrawer.js" />
     <Content Include="scripts\libs\midi\AudioDetect.js" />
     <Content Include="scripts\libs\midi\Base64.js" />
     <Content Include="scripts\libs\midi\base64binary.js" />
