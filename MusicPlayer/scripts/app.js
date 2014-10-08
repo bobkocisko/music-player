@@ -52,6 +52,9 @@
 
         var canvas = document.getElementById("myCanvas");
         canvas.onmousemove = function (e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
             var bbox = canvas.getBoundingClientRect();
             mousePos.x = e.clientX - bbox.left * (canvas.width / bbox.width);
             mousePos.y = e.clientY - bbox.top * (canvas.height / bbox.height);
@@ -60,7 +63,7 @@
 
             var clampedPoint = staffarranger.clampMovableHead(mousePos);
             var drawSize = symboldrawer.getDrawSize(previewsymbol);
-            var clampResults = relativearranger.clampMovableHead(astaff, clampedPoint, (drawSize.width / 2) + symbol.minimumSymbolLMargin);
+            var clampResults = relativearranger.clampMovableHead(astaff, clampedPoint, drawSize.width);
             clampedPoint = clampResults.clampedPoint;
             symboldrawer.draw(previewsymbol, clampedPoint, true);
 
@@ -69,6 +72,9 @@
         };
 
         canvas.onmousedown = function (e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
             var bbox = canvas.getBoundingClientRect();
             mousePos.x = e.clientX - bbox.left * (canvas.width / bbox.width);
             mousePos.y = e.clientY - bbox.top * (canvas.height / bbox.height);
@@ -87,7 +93,7 @@
                 var clampedPoint = staffarranger.clampMovableHead(mousePos);
                 var drawSize = symboldrawer.getDrawSize(previewsymbol);
                 var halfNoteWidth = (drawSize.width / 2);
-                var clampResults = relativearranger.clampMovableHead(astaff, clampedPoint, halfNoteWidth + symbol.minimumSymbolLMargin);
+                var clampResults = relativearranger.clampMovableHead(astaff, clampedPoint, drawSize.width);
                 clampedPoint = clampResults.clampedPoint;
                 var staffNotePosition = staffarranger.getStaffNotePositionFromY(clampedPoint.y);
                 //var lmargin = symbol.minimumSymbolLMargin;
