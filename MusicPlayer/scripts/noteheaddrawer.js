@@ -3,10 +3,12 @@
 
     var ctx = drawcontext.get();
 
-    var _draw = function (visualType, centerPoint, isPreview) {
+    var _draw = function (visualType, centerPoint, isPreview, multiplier) {
+        multiplier = typeof multiplier !== 'undefined' ? multiplier : 1;
+
         switch (visualType) {
             case notehead.visualTypes.quarter:
-                var height = staffarranger.noteHeight;
+                var height = staffarranger.noteHeight * multiplier;
                 ctx.save();
                 ctx.beginPath();
                 ctx.translate(centerPoint.x, centerPoint.y);
@@ -20,28 +22,22 @@
         }
     };
 
-    var _getDrawRect = function (visualType, centerPoint) {
+    var _getDrawRect = function (visualType, centerPoint, multiplier) {
+        multiplier = typeof multiplier !== 'undefined' ? multiplier : 1;
         switch (visualType) {
             case notehead.visualTypes.quarter:
-                var width = staffarranger.noteHeight * 1.3;
-                var height = staffarranger.noteHeight;
+                var width = staffarranger.noteHeight * 1.3 * multiplier;
+                var height = staffarranger.noteHeight * multiplier;
                 return new utils.Rectangle(centerPoint.x - width / 2, centerPoint.y - height / 2, width, height);
         }
     };
 
-    var _getDrawSize = function (visualType) {
-        switch (visualType) {
-            case notehead.visualTypes.quarter:
-                var width = staffarranger.noteHeight * 1.3;
-                var height = staffarranger.noteHeight;
-                return new utils.Size(width, height);
-        }
-    };
-
-    var _getStemAnchorVectors = function (visualType) {
+    var _getStemAnchorVectors = function (visualType, multiplier) {
         // Returns the offsets from the center of the head where the stem should be anchored
-        var width = (staffarranger.noteHeight * 1.2);
-        var height = staffarranger.noteHeight;
+        multiplier = typeof multiplier !== 'undefined' ? multiplier : 1;
+
+        var width = (staffarranger.noteHeight * 1.2) * multiplier;
+        var height = staffarranger.noteHeight * multiplier;
         switch (visualType) {
             case notehead.visualTypes.quarter:
                 return {
@@ -60,7 +56,6 @@
     return {
         draw: _draw,
         getDrawRect: _getDrawRect,
-        getDrawSize: _getDrawSize,
         getStemAnchorVectors: _getStemAnchorVectors,
     };
 });

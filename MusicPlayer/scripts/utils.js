@@ -1,4 +1,11 @@
 ﻿define(function () {
+
+    var _dimensions = {
+        horizontal: "horizontal",
+        vertical: "vertical",
+    };
+
+
     var _Rectangle = function (left, top, width, height) {
         this.left = left;
         this.top = top;
@@ -126,6 +133,49 @@
         );
     };
 
+    var _getConstrainingDimension = function (size, boundingSize) {
+        var aspectRatio = size.width / size.height;
+        var boundingAspectRatio = boundingSize.width / boundingSize.height;
+
+        if (boundingAspectRatio < aspectRatio) {
+            return _dimensions.horizontal;
+        }
+        else {
+            return _dimensions.vertical;
+        }
+    };
+
+    var _getRectUnitLocationFromAngleAnchor = function (unitRect, anchorPoint, desiredAngle) {
+        var halfWidth = unitRect.width / 2;
+        var halfHeight = unitRect.height / 2;
+
+        var cornerAngle = Math.atan2(halfHeight, halfWidth);
+        var desiredTangent = Math.tan(desiredAngle);
+
+        if (desiredAngle > 0) {
+            var directionToCenter = 1;
+        }
+        else {
+            var directionToCenter = -1;
+        }
+
+        if (cornerAngle < Math.abs(desiredAngle)) {
+            // base the calculations on the height
+            var centerX = anchorPoint.x - (halfHeight * desiredTangent); // ????????
+            var centerY = anchorPoint.y + (halfHeight * directionToCenter);
+        }
+        else {
+            // base the calculations on the width
+            var centerX = anchorPoint.x - (halfWidth * directionToCenter);
+            var centerY = anchorPoint.y + (halfWidth * desiredTangent); // ????????
+        }
+
+        var left = centerX - halfWidth;
+        var top = centerY - halfHeight;
+
+        return new _Point(left - unitRect.left, top - unitRect.top);
+    }
+
     return {
         Rectangle: _Rectangle,
         Size: _Size,
@@ -139,6 +189,8 @@
         pointPlusVector: _pointPlusVector,
         rectUnionPoint: _rectUnionPoint,
         rectUnionRect: _rectUnionRect,
+        dimensions: _dimensions,
+        getRectUnitLocationFromAngleAnchor: _getRectUnitLocationFromAngleAnchor,
     };
 
 });

@@ -1,4 +1,4 @@
-﻿define(['drawcontext', 'staffarranger','utils'], function (drawcontext, staffarranger, utils) {
+﻿define(['drawcontext', 'staffarranger', 'utils'], function (drawcontext, staffarranger, utils) {
     var ctx = drawcontext.get();
 
     var _innerRadius = staffarranger.noteHeight * 2;
@@ -8,7 +8,8 @@
     var optionstatuses = {
         off: "off",
         on: "on",
-    }
+    };
+    var _halfPI = Math.PI / 2;
 
     var _Selector = function () {
         this.options = [];
@@ -26,18 +27,47 @@
 
         var _draw = function (centerPoint) {
             var arcSize = Math.PI / this.options.length;
-            ctx.save();
-            ctx.translate(centerPoint.x, centerPoint.y);
-            ctx.rotate(-Math.PI / 2);
             for (var i = 0; i < this.options.length; i++) {
+                ctx.save();
+                ctx.translate(centerPoint.x, centerPoint.y);
+                ctx.scale(1, -1); // flip vertically so that the arc angles match typical geometry (for sanity!)
                 var option = this.options[i];
                 ctx.beginPath();
                 ctx.fillStyle = _buttonColors[option.status];
-                ctx.arc(0, 0, _outerRadius, arcSize * i, arcSize * (i + 1));
-                ctx.arc(0, 0, _innerRadius,  arcSize * (i + 1), arcSize * i, true); // cut-out from the outer when all is filled
+                var arcBegin = _halfPI - arcSize * i;
+                var arcEnd = _halfPI - arcSize * (i + 1);
+                ctx.arc(0, 0, _outerRadius, arcBegin, arcEnd, true); // true now means clockwise because we flipped the ctx!
+                ctx.arc(0, 0, _innerRadius, arcEnd, arcBegin); // cut-out from the outer when all is filled
                 ctx.fill();
+                ctx.restore();
+
+                var edgeAngle = (arcBegin + arcEnd) / 2;
+                var edgeAnchor = _identifyEdgeAnchor(centerPoint, edgeAngle);
+                if (true) // DEBUG
+                {
+                    ctx.beginPath();
+                    ctx.arc(edgeAnchor.x, edgeAnchor.y, 10, 0, Math.PI * 2);
+                    ctx.fillStyle = "#000000";
+                    ctx.fill();
+                }
+                var optionUnitRect = option.drawer.getDrawRect(option.option, new utils.Point(0, 0)); // TODO: multiplier?
+                var optionDrawLocation = utils.getRectUnitLocationFromAngleAnchor(optionUnitRect, edgeAnchor, edgeAngle);
+                if (true) // DEBUG
+                {
+                    ctx.beginPath();
+                    ctx.arc(optionDrawLocation.x, optionDrawLocation.y, 10, 0, Math.PI * 2);
+                    ctx.fillStyle = "#FF0000";
+                    ctx.fill();
+                }
+                option.drawer.draw(option.option, optionDrawLocation, true);
             }
-            ctx.restore();
+        };
+
+        var _identifyEdgeAnchor = function (centerPoint, edgeAngle) {
+            return new utils.Point(
+                centerPoint.x + Math.cos(edgeAngle) * _outerRadius,
+                centerPoint.y - Math.sin(edgeAngle) * _outerRadius
+                );
         };
 
         var _getDrawRect = function (centerPoint) {
@@ -51,6 +81,11 @@
 
         var _clear = function (centerPoint) {
             var clearRect = _getDrawRect(centerPoint);
+            // adjust clear area so that the pixels affected by antialiasing will be properly cleaned up
+            clearRect.left -= 2;
+            clearRect.top -= 2;
+            clearRect.width += 4;
+            clearRect.height += 4;
             ctx.clearRect(clearRect.left, clearRect.top, clearRect.width, clearRect.height);
             return clearRect;
         };
@@ -58,7 +93,7 @@
         var _updateOptionStatuses = function (centerPoint, point) {
             // Updates the statuses of each option depending upon whether that option is under the specified point.
             // Returns whether there are any status changes as a result of this update.
-            var pointAngle = Math.atan2(point.y - centerPoint.y, point.x - centerPoint.x) + (Math.PI / 2);
+            var pointAngle = Math.atan2(point.y - centerPoint.y, point.x - centerPoint.x) + _halfPI;
             var pointPercent = pointAngle / Math.PI;
             var optionUnderPoint = Math.floor(pointPercent * this.options.length);
             var distance = Math.sqrt(Math.pow(point.x - centerPoint.x, 2) + Math.pow(point.y - centerPoint.y, 2));

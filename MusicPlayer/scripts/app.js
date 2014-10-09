@@ -169,9 +169,12 @@
         };
 
         var aselector = new selector.Selector();
-        aselector.addOption(null, null);
-        aselector.addOption(null, null);
-        aselector.addOption(null, null);
+        var dqnote = new symbol.Note(new notehead.Notehead(null, notehead.visualTypes.quarter, notehead.directions.left, true, notehead.accidentals.none), new stem.Stem(stem.directions.up), 0, 0, symbol.minimumSymbolLMargin);
+        aselector.addOption(dqnote, symboldrawer);
+        var qnote = new symbol.Note(new notehead.Notehead(null, notehead.visualTypes.quarter, notehead.directions.left, false, notehead.accidentals.none), new stem.Stem(stem.directions.up), 0, 0, symbol.minimumSymbolLMargin);
+        aselector.addOption(qnote, symboldrawer);
+        var enote = new symbol.Note(new notehead.Notehead(null, notehead.visualTypes.quarter, notehead.directions.left, false, notehead.accidentals.none), new stem.Stem(stem.directions.up), 0, 1, symbol.minimumSymbolLMargin);
+        aselector.addOption(enote, symboldrawer);
 
         var backgroundrect = new utils.Rectangle(
             0,
