@@ -61,7 +61,11 @@
             var pointAngle = Math.atan2(point.y - centerPoint.y, point.x - centerPoint.x) + (Math.PI / 2);
             var pointPercent = pointAngle / Math.PI;
             var optionUnderPoint = Math.floor(pointPercent * this.options.length);
-            if (optionUnderPoint < 0) {
+            var distance = Math.sqrt(Math.pow(point.x - centerPoint.x, 2) + Math.pow(point.y - centerPoint.y, 2));
+            if (distance < _innerRadius ||
+                distance > _outerRadius ||
+                optionUnderPoint < 0 ||
+                optionUnderPoint >= this.options.length) {
                 return this.clearOptionStatuses();
             }
             var changes = false;
