@@ -12,6 +12,7 @@
     'structure/notehead',
     'structure/symbol',
     'structure/stem',
+    'selector',
 ],
     function (backgrounddrawer,
         viewport,
@@ -26,7 +27,8 @@
         staffsection,
         notehead,
         symbol,
-        stem
+        stem,
+        selector
         ) {
         'use strict';
 
@@ -64,6 +66,11 @@
             var clampResults = relativearranger.clampMovableHead(astaff, clampedPoint, drawXUnitRect);
             clampedPoint = clampResults.clampedPoint;
             symboldrawer.draw(previewsymbol, clampedPoint, true);
+
+            // TODO: clean this up
+            aselector.updateOptionStatuses(aselectorLocation, mousePos);
+            aselector.clear(aselectorLocation);
+            aselector.draw(aselectorLocation);
 
             lastDrawnPoint = clampedPoint;
 
@@ -161,6 +168,11 @@
             }
         };
 
+        var aselector = new selector.Selector();
+        aselector.addOption(null, null);
+        aselector.addOption(null, null);
+        aselector.addOption(null, null);
+
         var backgroundrect = new utils.Rectangle(
             0,
             0,
@@ -171,6 +183,9 @@
         drawIntersectingSymbols(backgroundrect);
 
         playbacktoolbar.drawButtons();
+
+        var aselectorLocation = new utils.Point(100, 200);
+        aselector.draw(aselectorLocation);
 
         var lastDrawnPoint = mousePos;
 

@@ -26,14 +26,18 @@
 
         var _draw = function (centerPoint) {
             var arcSize = Math.PI / this.options.length;
+            ctx.save();
+            ctx.translate(centerPoint.x, centerPoint.y);
+            ctx.rotate(-Math.PI / 2);
             for (var i = 0; i < this.options.length; i++) {
                 var option = this.options[i];
                 ctx.beginPath();
                 ctx.fillStyle = _buttonColors[option.status];
-                ctx.arc(centerPoint.x, centerPoint.y, _innerRadius, arcSize * i, arcSize * (i + 1));
-                ctx.arc(centerPoint.x, centerPoint.y, _outerRadius, arcSize * i, arcSize * (i + 1));
+                ctx.arc(0, 0, _outerRadius, arcSize * i, arcSize * (i + 1));
+                ctx.arc(0, 0, _innerRadius,  arcSize * (i + 1), arcSize * i, true); // cut-out from the outer when all is filled
                 ctx.fill();
             }
+            ctx.restore();
         };
 
         var _getDrawRect = function (centerPoint) {
@@ -45,13 +49,20 @@
                 );
         };
 
+        var _clear = function (centerPoint) {
+            var clearRect = _getDrawRect(centerPoint);
+            ctx.clearRect(clearRect.left, clearRect.top, clearRect.width, clearRect.height);
+            return clearRect;
+        };
+
         var _updateOptionStatuses = function (centerPoint, point) {
             // Updates the statuses of each option depending upon whether that option is under the specified point.
             // Returns whether there are any status changes as a result of this update.
-            var pointAngle = Math.tan((point.y - centerPoint.y) / (point.x - centerPoint.x));
-            var optionUnderPoint = pointAngle * this.options.length;
+            var pointAngle = Math.atan2(point.y - centerPoint.y, point.x - centerPoint.x) + (Math.PI / 2);
+            var pointPercent = pointAngle / Math.PI;
+            var optionUnderPoint = Math.floor(pointPercent * this.options.length);
             if (optionUnderPoint < 0) {
-                return _clearOptionStatuses();
+                return this.clearOptionStatuses();
             }
             var changes = false;
             for (var i = 0; i < this.options.length; i++) {
@@ -83,6 +94,7 @@
         return {
             addOption: _addOption,
             draw: _draw,
+            clear: _clear,
             getDrawRect: _getDrawRect,
             updateOptionStatuses: _updateOptionStatuses,
             clearOptionStatuses: _clearOptionStatuses,

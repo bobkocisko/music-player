@@ -19,8 +19,8 @@
 
     var _getEditButtonColors = function () {
         return {
-            off: "rgba(170,0,0, 0.75)",
-            on: "rgba(170,0,0, 1)",
+            off: "rgba(200,200,255, 0.5)",
+            on: "rgba(50,50,170, 1)",
             //pressed: "rgba(220,0,0, 1)",
             //disabled: "rgba(170,170,170, 0.75)",
             };
