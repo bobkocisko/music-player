@@ -37,18 +37,47 @@
         };
 
         var _getDrawRect = function (centerPoint) {
-            return new utils.Rectangle()
+            return new utils.Rectangle(
+                centerPoint.x + _centerPointXOffset,
+                centerPoint.y - _outerRadius,
+                _outerRadius - _centerPointXOffset,
+                _outerRadius * 2
+                );
         };
 
-        var _updateOptionStatuses = function (point) {
+        var _updateOptionStatuses = function (centerPoint, point) {
             // Updates the statuses of each option depending upon whether that option is under the specified point.
             // Returns whether there are any status changes as a result of this update.
+            var pointAngle = Math.tan((point.y - centerPoint.y) / (point.x - centerPoint.x));
+            var optionUnderPoint = pointAngle * this.options.length;
+            if (optionUnderPoint < 0) {
+                return _clearOptionStatuses();
+            }
+            var changes = false;
+            for (var i = 0; i < this.options.length; i++) {
+                var option = this.options[i];
+                if (i == optionUnderPoint) {
+                    var currentStatus = optionstatuses.on;
+                }
+                else {
+                    var currentStatus = optionstatuses.off;
+                }
+                if (option.status != currentStatus) {
+                    changes = true;
+                    option.status = currentStatus;
+                }
+            }
+            return changes;
         };
 
         var _clearOptionStatuses = function () {
+            // Returns whether there are any status changes as a result of this update.
+            var changes = false;
             for (var i in this.options) {
+                if (this.options[i].status == optionstatuses.on) changes = true;
                 this.options[i].status = optionstatuses.off;
             }
+            return changes;
         };
 
         return {
