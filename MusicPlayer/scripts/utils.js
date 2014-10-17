@@ -149,26 +149,10 @@
         var halfWidth = unitRect.width / 2;
         var halfHeight = unitRect.height / 2;
 
-        var cornerAngle = Math.atan2(halfHeight, halfWidth);
-        var desiredTangent = Math.tan(desiredAngle);
+        var radius = Math.sqrt(Math.pow(halfWidth, 2) + Math.pow(halfHeight, 2));
 
-        if (desiredAngle > 0) {
-            var directionToCenter = 1;
-        }
-        else {
-            var directionToCenter = -1;
-        }
-
-        if (cornerAngle < Math.abs(desiredAngle)) {
-            // base the calculations on the height
-            var centerX = anchorPoint.x - (halfHeight * desiredTangent); // ????????
-            var centerY = anchorPoint.y + (halfHeight * directionToCenter);
-        }
-        else {
-            // base the calculations on the width
-            var centerX = anchorPoint.x - (halfWidth * directionToCenter);
-            var centerY = anchorPoint.y + (halfWidth * desiredTangent); // ????????
-        }
+        var centerX = anchorPoint.x - Math.cos(desiredAngle) * radius;
+        var centerY = anchorPoint.y + Math.sin(desiredAngle) * radius;
 
         var left = centerX - halfWidth;
         var top = centerY - halfHeight;

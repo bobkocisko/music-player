@@ -5,6 +5,7 @@
     var _outerRadius = _innerRadius + staffarranger.noteHeight * 4;
     var _centerPointXOffset = -staffarranger.noteHeight / 2;
     var _buttonColors = drawcontext.getEditButtonColors();
+    var _symbolDrawMult = 0.5;
     var optionstatuses = {
         off: "off",
         on: "on",
@@ -43,23 +44,9 @@
 
                 var edgeAngle = (arcBegin + arcEnd) / 2;
                 var edgeAnchor = _identifyEdgeAnchor(centerPoint, edgeAngle);
-                if (true) // DEBUG
-                {
-                    ctx.beginPath();
-                    ctx.arc(edgeAnchor.x, edgeAnchor.y, 10, 0, Math.PI * 2);
-                    ctx.fillStyle = "#000000";
-                    ctx.fill();
-                }
-                var optionUnitRect = option.drawer.getDrawRect(option.option, new utils.Point(0, 0)); // TODO: multiplier?
+                var optionUnitRect = option.drawer.getDrawRect(option.option, new utils.Point(0, 0), _symbolDrawMult);
                 var optionDrawLocation = utils.getRectUnitLocationFromAngleAnchor(optionUnitRect, edgeAnchor, edgeAngle);
-                if (true) // DEBUG
-                {
-                    ctx.beginPath();
-                    ctx.arc(optionDrawLocation.x, optionDrawLocation.y, 10, 0, Math.PI * 2);
-                    ctx.fillStyle = "#FF0000";
-                    ctx.fill();
-                }
-                option.drawer.draw(option.option, optionDrawLocation, true);
+                option.drawer.draw(option.option, optionDrawLocation, true, _symbolDrawMult);
             }
         };
 
