@@ -79,7 +79,7 @@
     <Content Include="scripts\libs\midi\Plugin.js" />
     <Content Include="scripts\libs\midi\soundfont\acoustic_grand_piano-mp3.js" />
     <Content Include="scripts\libs\midi\soundfont\acoustic_grand_piano-ogg.js" />
-    <Content Include="scripts\noteadder.js" />
+    <Content Include="scripts\symboladder.js" />
     <Content Include="scripts\notereader.js" />
     <Content Include="scripts\libs\require-min.js" />
     <Content Include="scripts\main.js" />
