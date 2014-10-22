@@ -14,6 +14,29 @@
         this.flagcount = flagCount;
     };
 
+    _Note.prototype = function () {
+        var _clone = function () {
+            var newNote = new _Note(
+                this.notehead.clone(),
+                this.stem.clone(),
+                this.stemorder,
+                this.flagcount,
+                this.lmargin);
+            return newNote;
+        };
+
+        var _clearDirection = function () {
+            // Removes the notehead and stem direction information
+            this.notehead.direction = null;
+            this.stem.direction = null;
+        };
+
+        return {
+            clone: _clone,
+            clearDirection: _clearDirection,
+        };
+    }();
+
     var _Rest = function (type, lmargin) {
         _SymbolBase.call(this, lmargin);
         this.type = type;

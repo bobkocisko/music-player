@@ -47,7 +47,7 @@
                 if (this.isSelecting) {
                     var anyUpdates = this.selector.updateOptionStatuses(this.selectorLocation, mousePoint);
                     if (anyUpdates) {
-                        _updatePreviewSymbolFromSelector.call(this);
+                        this.previewsymbol = _cloneDirectionlessSymbol.call(this, this.selector.getSelectedOption());
                         this.fixLastDrawnPoint();
                         var clearRect = this.selector.clear(this.selectorLocation);
                         backgrounddrawer.draw(clearRect);
@@ -91,8 +91,13 @@
                 this.lastDrawnPoint = clampedPoint;
             };
 
-            var _updatePreviewSymbolFromSelector = function () {
-                this.previewsymbol = this.selector.getSelectedOption();
+            var _cloneDirectionlessSymbol = function (asymbol) {
+                var clonedSymbol = asymbol.clone();
+                if (clonedSymbol.clearDirection) {
+                    // Remove any direction-specific information from the symbol
+                    clonedSymbol.clearDirection();
+                }
+                return clonedSymbol;
             };
 
             var _fixLastDrawnPoint = function () {
@@ -135,7 +140,12 @@
                 var staffNotePosition = staffarranger.getStaffNotePositionFromY(clampedPoint.y);
                 var stemdirection = staffarranger.getDefaultStemDirection(staffNotePosition);
                 var notedirection = staffarranger.getDefaultNoteDirection(staffNotePosition);
-                var newNote = new symbol.Note(new notehead.Notehead(staffNotePosition, notehead.visualTypes.quarter, notedirection, false, notehead.accidentals.none), new stem.Stem(stemdirection), 0, 1, clampResults.newLMargin);
+                //var newNote = new symbol.Note(new notehead.Notehead(staffNotePosition, notehead.visualTypes.quarter, notedirection, false, notehead.accidentals.none), new stem.Stem(stemdirection), 0, 1, clampResults.newLMargin);
+                var newNote = _cloneDirectionlessSymbol.call(this, this.previewsymbol);
+                newNote.notehead.staffposition = staffNotePosition;
+                newNote.notehead.direction = notedirection;
+                newNote.stem.direction = stemdirection;
+                newNote.lmargin = clampResults.newLMargin;
                 if (!clampResults.beforeSymbol) {
                     this.staff.addSymbol(newNote);
                 }

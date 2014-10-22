@@ -5,11 +5,16 @@
     };
 
     _Stem.prototype = function () {
-        var addNotehead = function (notehead) {
+        var _clone = function () {
+            var newStem = new _Stem(this.direction);
+            return newStem;
+        };
+
+        var _addNotehead = function (notehead) {
             this.noteheads.push(notehead);
         };
 
-        var removeNotehead = function (notehead) {
+        var _removeNotehead = function (notehead) {
             var index = this.noteheads.indexOf(notehead);
             if (index > -1) {
                 this.noteheads.splice(index, 1);
@@ -17,8 +22,9 @@
         }
 
         return {
-            addNotehead: addNotehead,
-            removeNotehead: removeNotehead,
+            addNotehead: _addNotehead,
+            removeNotehead: _removeNotehead,
+            clone: _clone,
         };
     }();
 

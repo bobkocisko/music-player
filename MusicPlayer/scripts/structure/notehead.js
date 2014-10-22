@@ -7,6 +7,22 @@
         this.accidental = accidental;
     };
 
+    _Notehead.prototype = function () {
+        var _clone = function () {
+            var newNotehead = new _Notehead(
+                this.staffposition,
+                this.visualtype,
+                this.direction,
+                this.isdotted,
+                this.accidental);
+            return newNotehead;
+        };
+
+        return {
+            clone: _clone,
+        }
+    }();
+
     return {
         Notehead: _Notehead,
         visualTypes: {
