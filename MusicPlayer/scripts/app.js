@@ -13,6 +13,7 @@
     'structure/symbol',
     'structure/stem',
     'selector',
+    'symboladder',
 ],
     function (backgrounddrawer,
         viewport,
@@ -28,7 +29,8 @@
         notehead,
         symbol,
         stem,
-        selector
+        selector,
+        symboladder
         ) {
         'use strict';
 
@@ -42,8 +44,9 @@
             e.stopImmediatePropagation();
 
             var bbox = canvas.getBoundingClientRect();
-            mousePos.x = e.clientX - bbox.left * (canvas.width / bbox.width);
-            mousePos.y = e.clientY - bbox.top * (canvas.height / bbox.height);
+            var mouseX = e.clientX - bbox.left * (canvas.width / bbox.width);
+            var mouseY = e.clientY - bbox.top * (canvas.height / bbox.height);
+            var mousePos = { x: mouseX, y: mouseY };
 
             asymboladder.mouseMoved(mousePos);
         };
@@ -53,8 +56,9 @@
             e.stopImmediatePropagation();
 
             var bbox = canvas.getBoundingClientRect();
-            mousePos.x = e.clientX - bbox.left * (canvas.width / bbox.width);
-            mousePos.y = e.clientY - bbox.top * (canvas.height / bbox.height);
+            var mouseX = e.clientX - bbox.left * (canvas.width / bbox.width);
+            var mouseY = e.clientY - bbox.top * (canvas.height / bbox.height);
+            var mousePos = { x: mouseX, y: mouseY };
 
             if (playbacktoolbar.highLevelHitTest(mousePos)) {
                 // assume that it's the play button because it's the only one in the toolbar
@@ -78,11 +82,9 @@
             viewport.height);
 
         backgrounddrawer.draw(backgroundrect);
-        drawIntersectingSymbols(backgroundrect);
+        //drawIntersectingSymbols(backgroundrect);
 
         playbacktoolbar.drawButtons();
-
-        var lastDrawnPoint = mousePos;
 
         function step(timestamp) {
 

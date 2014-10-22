@@ -5,7 +5,10 @@
     'relativearranger',
     'selector',
     'structure/notehead',
-    'structure/symbol'
+    'structure/symbol',
+    'structure/stem',
+    'utils',
+    'viewport',
 ],
     function (
         staffarranger,
@@ -14,7 +17,10 @@
         relativearranger,
         selector,
         notehead,
-        symbol) {
+        symbol,
+        stem,
+        utils,
+        viewport) {
         var _Adder = function (aStaff) {
             this.staff = aStaff;
             this.previewsymbol = new symbol.Note(new notehead.Notehead(null, notehead.visualTypes.quarter, null, false, notehead.accidentals.none), new stem.Stem(null), 0, 1, symbol.minimumSymbolLMargin);
@@ -40,14 +46,14 @@
 
                 var clampedPoint = staffarranger.clampMovableHead(mousePoint);
                 var drawXUnitRect = symboldrawer.getDrawRect(this.previewsymbol, { x: 0, y: clampedPoint.y });
-                var clampResults = relativearranger.clampMovableHead(astaff, clampedPoint, drawXUnitRect);
+                var clampResults = relativearranger.clampMovableHead(this.staff, clampedPoint, drawXUnitRect);
                 clampedPoint = clampResults.clampedPoint;
                 symboldrawer.draw(this.previewsymbol, clampedPoint, true);
 
                 // TODO: clean this up
-                this.selector.updateOptionStatuses(this.selectorLocation, mousePoint);
-                this.selector.clear(this.selectorLocation);
-                this.selector.draw(this.selectorLocation);
+                //this.selector.updateOptionStatuses(this.selectorLocation, mousePoint);
+                //this.selector.clear(this.selectorLocation);
+                //this.selector.draw(this.selectorLocation);
 
                 this.lastDrawnPoint = clampedPoint;
             };
@@ -57,7 +63,7 @@
 
                 var clampedPoint = staffarranger.clampMovableHead(mousePoint);
                 var drawXUnitRect = symboldrawer.getDrawRect(this.previewsymbol, { x: 0, y: clampedPoint.y });
-                var clampResults = relativearranger.clampMovableHead(astaff, clampedPoint, drawXUnitRect);
+                var clampResults = relativearranger.clampMovableHead(this.staff, clampedPoint, drawXUnitRect);
                 clampedPoint = clampResults.clampedPoint;
                 var staffNotePosition = staffarranger.getStaffNotePositionFromY(clampedPoint.y);
                 var stemdirection = staffarranger.getDefaultStemDirection(staffNotePosition);
@@ -78,7 +84,7 @@
                 backgrounddrawer.draw(backgroundrect);
                 this.drawIntersectingSymbols(backgroundrect);
                 //var symbolLMargin = 50;
-                //var centerX = astaff.symbols.length * symbolLMargin;
+                //var centerX = this.staff.symbols.length * symbolLMargin;
 
                 //var centerPoint = { x: centerX, y: clampedPoint.y };
                 //symboldrawer.draw(notehead.visualTypes.quarter, centerPoint, false);
@@ -97,8 +103,8 @@
             var _drawIntersectingSymbols = function (r) {
                 var cumulativeX = staffarranger.horizontalMargin;
 
-                for (var i = 0; i < astaff.symbols.length; i++) {
-                    var asymbol = astaff.symbols[i];
+                for (var i = 0; i < this.staff.symbols.length; i++) {
+                    var asymbol = this.staff.symbols[i];
 
                     var staffPosition = asymbol.notehead.staffposition;
                     var centerY = staffarranger.getYFromStaffNotePosition(staffPosition);
