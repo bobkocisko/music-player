@@ -6,7 +6,7 @@
     var _centerPointXOffset = -staffarranger.noteHeight / 2;
     var _buttonColors = drawcontext.getEditButtonColors();
     var _symbolDrawMult = 0.5;
-    var optionstatuses = {
+    var _optionstatuses = {
         off: "off",
         on: "on",
     };
@@ -17,12 +17,13 @@
     };
 
     _Selector.prototype = function () {
-        var _addOption = function (option, drawer) {
+        var _addOption = function (option, drawer, status) {
+            var aStatus = typeof status !== 'undefined' ? status : _optionstatuses.off;
             this.options.push(
                 {
                     option: option,
                     drawer: drawer,
-                    status: optionstatuses.off
+                    status: aStatus,
                 });
         };
 
@@ -88,16 +89,17 @@
                 distance > _outerRadius ||
                 optionUnderPoint < 0 ||
                 optionUnderPoint >= this.options.length) {
-                return this.clearOptionStatuses();
+                // The point does not fall anywhere on this selector, so no status changes will be made
+                return false;
             }
             var changes = false;
             for (var i = 0; i < this.options.length; i++) {
                 var option = this.options[i];
                 if (i == optionUnderPoint) {
-                    var currentStatus = optionstatuses.on;
+                    var currentStatus = _optionstatuses.on;
                 }
                 else {
-                    var currentStatus = optionstatuses.off;
+                    var currentStatus = _optionstatuses.off;
                 }
                 if (option.status != currentStatus) {
                     changes = true;
@@ -111,10 +113,20 @@
             // Returns whether there are any status changes as a result of this update.
             var changes = false;
             for (var i in this.options) {
-                if (this.options[i].status == optionstatuses.on) changes = true;
-                this.options[i].status = optionstatuses.off;
+                if (this.options[i].status == _optionstatuses.on) changes = true;
+                this.options[i].status = _optionstatuses.off;
             }
             return changes;
+        };
+
+        var _getSelectedOption = function () {
+            // returns the first of the selected options, or undefined if there are none.
+            for (var i in this.options) {
+                if (this.options[i].status == _optionstatuses.on) {
+                    return this.options[i].option;
+                }
+            }
+            return;
         };
 
         return {
@@ -124,10 +136,12 @@
             getDrawRect: _getDrawRect,
             updateOptionStatuses: _updateOptionStatuses,
             clearOptionStatuses: _clearOptionStatuses,
+            getSelectedOption: _getSelectedOption,
         };
     }();
 
     return {
+        optionStatuses: _optionstatuses,
         Selector: _Selector,
     };
 });

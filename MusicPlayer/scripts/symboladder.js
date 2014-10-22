@@ -23,7 +23,7 @@
         viewport) {
         var _Adder = function (aStaff) {
             this.staff = aStaff;
-            this.previewsymbol = new symbol.Note(new notehead.Notehead(null, notehead.visualTypes.quarter, null, false, notehead.accidentals.none), new stem.Stem(null), 0, 1, symbol.minimumSymbolLMargin);
+            this.previewsymbol = new symbol.Note(new notehead.Notehead(null, notehead.visualTypes.quarter, null, false, notehead.accidentals.none), new stem.Stem(null), 0, 0, symbol.minimumSymbolLMargin);
 
             this.lastDrawnPoint = {
                 x: -20,
@@ -34,34 +34,65 @@
             var dqnote = new symbol.Note(new notehead.Notehead(null, notehead.visualTypes.quarter, notehead.directions.left, true, notehead.accidentals.none), new stem.Stem(stem.directions.up), 0, 0, symbol.minimumSymbolLMargin);
             this.selector.addOption(dqnote, symboldrawer);
             var qnote = new symbol.Note(new notehead.Notehead(null, notehead.visualTypes.quarter, notehead.directions.left, false, notehead.accidentals.none), new stem.Stem(stem.directions.up), 0, 0, symbol.minimumSymbolLMargin);
-            this.selector.addOption(qnote, symboldrawer);
+            this.selector.addOption(qnote, symboldrawer, selector.optionStatuses.on);
             var enote = new symbol.Note(new notehead.Notehead(null, notehead.visualTypes.quarter, notehead.directions.left, false, notehead.accidentals.none), new stem.Stem(stem.directions.up), 0, 1, symbol.minimumSymbolLMargin);
             this.selector.addOption(enote, symboldrawer);
+
+            this.isSelecting = false;
         };
 
         _Adder.prototype = function () {
             var _mouseMoved = function (mousePoint) {
 
-                this.fixLastDrawnPoint();
+                if (this.isSelecting) {
+                    var anyUpdates = this.selector.updateOptionStatuses(this.selectorLocation, mousePoint);
+                    if (anyUpdates) {
+                        _updatePreviewSymbolFromSelector.call(this);
+                        this.fixLastDrawnPoint();
+                        var clearRect = this.selector.clear(this.selectorLocation);
+                        backgrounddrawer.draw(clearRect);
+                        this.drawIntersectingSymbols(clearRect);
+                        _clampAndDrawPreview.call(this, this.selectorLocation);
+                        this.selector.draw(this.selectorLocation);
+                    }
 
-                var clampedPoint = staffarranger.clampMovableHead(mousePoint);
-                var drawXUnitRect = symboldrawer.getDrawRect(this.previewsymbol, { x: 0, y: clampedPoint.y });
-                var clampResults = relativearranger.clampMovableHead(this.staff, clampedPoint, drawXUnitRect);
-                clampedPoint = clampResults.clampedPoint;
-                symboldrawer.draw(this.previewsymbol, clampedPoint, true);
-
-                // TODO: clean this up
-                //this.selector.updateOptionStatuses(this.selectorLocation, mousePoint);
-                //this.selector.clear(this.selectorLocation);
-                //this.selector.draw(this.selectorLocation);
-
-                this.lastDrawnPoint = clampedPoint;
+                }
+                else {
+                    this.fixLastDrawnPoint();
+                    _clampAndDrawPreview.call(this, mousePoint);
+                }
             };
 
             var _mouseDown = function (mousePoint) {
                 this.fixLastDrawnPoint();
 
-                _addToStaff.call(this, mousePoint);
+                _clampAndDrawPreview.call(this, mousePoint);
+
+                this.selector.draw(mousePoint);
+
+                this.selectorLocation = mousePoint;
+
+                this.isSelecting = true;
+            };
+
+            var _mouseUp = function (mousePoint) {
+                if (this.isSelecting) {
+                    _addToStaff.call(this, this.selectorLocation);
+                    this.isSelecting = false;
+                }
+            };
+
+            var _clampAndDrawPreview = function (mousePoint) {
+                var clampedPoint = staffarranger.clampMovableHead(mousePoint);
+                var drawXUnitRect = symboldrawer.getDrawRect(this.previewsymbol, { x: 0, y: clampedPoint.y });
+                var clampResults = relativearranger.clampMovableHead(this.staff, clampedPoint, drawXUnitRect);
+                clampedPoint = clampResults.clampedPoint;
+                symboldrawer.draw(this.previewsymbol, clampedPoint, true);
+                this.lastDrawnPoint = clampedPoint;
+            };
+
+            var _updatePreviewSymbolFromSelector = function () {
+                this.previewsymbol = this.selector.getSelectedOption();
             };
 
             var _fixLastDrawnPoint = function () {
@@ -124,6 +155,7 @@
             return {
                 mouseMoved: _mouseMoved,
                 mouseDown: _mouseDown,
+                mouseUp: _mouseUp,
                 fixLastDrawnPoint: _fixLastDrawnPoint,
                 drawIntersectingSymbols: _drawIntersectingSymbols,
             };

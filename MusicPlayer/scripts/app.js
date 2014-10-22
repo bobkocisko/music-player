@@ -75,6 +75,18 @@
 
         };
 
+        canvas.onmouseup = function (e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            var bbox = canvas.getBoundingClientRect();
+            var mouseX = e.clientX - bbox.left * (canvas.width / bbox.width);
+            var mouseY = e.clientY - bbox.top * (canvas.height / bbox.height);
+            var mousePos = { x: mouseX, y: mouseY };
+
+            asymboladder.mouseUp(mousePos);
+        };
+
         var backgroundrect = new utils.Rectangle(
             0,
             0,
