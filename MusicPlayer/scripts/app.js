@@ -5,8 +5,7 @@
     'staffarranger',
     'relativearranger',
     'playbacktoolbar',
-    'musicplayer',
-    'notereader',
+    'staffinterpreter',
     'structure/staff',
     'structure/staffsection',
     'structure/notehead',
@@ -22,8 +21,7 @@
         staffarranger,
         relativearranger,
         playbacktoolbar,
-        musicplayer,
-        notereader,
+        staffinterpreter,
         staff,
         staffsection,
         notehead,
@@ -62,11 +60,7 @@
 
             if (playbacktoolbar.highLevelHitTest(mousePos)) {
                 // assume that it's the play button because it's the only one in the toolbar
-                for (var i = 0; i < astaff.symbols.length; i++) {
-                    var aSymbol = astaff.symbols[i];
-                    var noteIndex = notereader.getNoteIndexFromStaffPosition(aSymbol.notehead.staffposition);
-                    musicplayer.addNote(noteIndex, i, 0.75);
-                }
+                staffinterpreter.playStaff(astaff);
 
             } else {
                 asymboladder.mouseDown(mousePos);
