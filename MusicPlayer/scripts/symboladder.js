@@ -61,36 +61,7 @@
             var _mouseDown = function (mousePoint) {
                 this.fixLastDrawnPoint();
 
-                var clampedPoint = staffarranger.clampMovableHead(mousePoint);
-                var drawXUnitRect = symboldrawer.getDrawRect(this.previewsymbol, { x: 0, y: clampedPoint.y });
-                var clampResults = relativearranger.clampMovableHead(this.staff, clampedPoint, drawXUnitRect);
-                clampedPoint = clampResults.clampedPoint;
-                var staffNotePosition = staffarranger.getStaffNotePositionFromY(clampedPoint.y);
-                var stemdirection = staffarranger.getDefaultStemDirection(staffNotePosition);
-                var notedirection = staffarranger.getDefaultNoteDirection(staffNotePosition);
-                var newNote = new symbol.Note(new notehead.Notehead(staffNotePosition, notehead.visualTypes.quarter, notedirection, false, notehead.accidentals.none), new stem.Stem(stemdirection), 0, 1, clampResults.newLMargin);
-                if (!clampResults.beforeSymbol) {
-                    this.staff.addSymbol(newNote);
-                }
-                else {
-                    // adjust the margin of the note following the inserted note
-                    clampResults.beforeSymbol.lmargin -= drawXUnitRect.width + newNote.lmargin;
-                    if (clampResults.beforeSymbol.lmargin < symbol.minimumSymbolLMargin) clampResults.beforeSymbol.lmargin = symbol.minimumSymbolLMargin;
-                    this.staff.insertSymbol(clampResults.beforeSymbol, newNote);
-                }
-
-                // TODO  replace this with something like the following commented stuff              
-                backgrounddrawer.clear(backgroundrect);
-                backgrounddrawer.draw(backgroundrect);
-                this.drawIntersectingSymbols(backgroundrect);
-                //var symbolLMargin = 50;
-                //var centerX = this.staff.symbols.length * symbolLMargin;
-
-                //var centerPoint = { x: centerX, y: clampedPoint.y };
-                //symboldrawer.draw(notehead.visualTypes.quarter, centerPoint, false);
-
-                this.lastDrawnPoint = clampedPoint;
-
+                _addToStaff.call(this, mousePoint);
             };
 
             var _fixLastDrawnPoint = function () {
@@ -123,6 +94,31 @@
 
                     cumulativeX += spaceForSymbol;
                 }
+            };
+
+            var _addToStaff = function (mousePoint) {
+                var clampedPoint = staffarranger.clampMovableHead(mousePoint);
+                var drawXUnitRect = symboldrawer.getDrawRect(this.previewsymbol, { x: 0, y: clampedPoint.y });
+                var clampResults = relativearranger.clampMovableHead(this.staff, clampedPoint, drawXUnitRect);
+                clampedPoint = clampResults.clampedPoint;
+                var staffNotePosition = staffarranger.getStaffNotePositionFromY(clampedPoint.y);
+                var stemdirection = staffarranger.getDefaultStemDirection(staffNotePosition);
+                var notedirection = staffarranger.getDefaultNoteDirection(staffNotePosition);
+                var newNote = new symbol.Note(new notehead.Notehead(staffNotePosition, notehead.visualTypes.quarter, notedirection, false, notehead.accidentals.none), new stem.Stem(stemdirection), 0, 1, clampResults.newLMargin);
+                if (!clampResults.beforeSymbol) {
+                    this.staff.addSymbol(newNote);
+                }
+                else {
+                    // adjust the margin of the note following the inserted note
+                    clampResults.beforeSymbol.lmargin -= drawXUnitRect.width + newNote.lmargin;
+                    if (clampResults.beforeSymbol.lmargin < symbol.minimumSymbolLMargin) clampResults.beforeSymbol.lmargin = symbol.minimumSymbolLMargin;
+                    this.staff.insertSymbol(clampResults.beforeSymbol, newNote);
+                }
+
+                // TODO  replace this with clearing then redrawing notes              
+                backgrounddrawer.clear(backgroundrect);
+                backgrounddrawer.draw(backgroundrect);
+                this.drawIntersectingSymbols(backgroundrect);
             };
 
             return {
